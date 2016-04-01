@@ -6,10 +6,19 @@ var C = {};
 
 C.isArrayLike = require('lodash/isArrayLike');
 
-C.isNodejs = 'object' === typeof process && Object.prototype.toString.call(process) === '[object process]';
+C.isNodejs = 'object' === typeof eval('process') && Object.prototype.toString.call(eval('process')) === '[object process]';
+
+C.root = {};
+
+try {
+    //noinspection JSUnresolvedVariable
+    C.root = GLOBAL;
+} catch (e) {
+    C.root = window;
+}
 
 //noinspection JSUnresolvedVariable
-C.root = C.isNodejs ? GLOBAL : window;
+// C.root = C.isNodejs ? GLOBAL : window;
 
 //noinspection JSUnresolvedVariable
 var root = C.root;
