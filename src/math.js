@@ -4,11 +4,27 @@
 
 var Ms = {};
 var C = require('./minicore');
+var E = require('./stacktrace');
+
+Ms.sum = function(list) {
+    if (!C.isArrayLike(list)) return 0;
+    var sum = 0;
+    var length = list.length;
+    length++;
+    while(--length) {
+        sum += list[length - 0];
+    }
+    if (isNaN(sum)) {
+        E.printStackTrace("NaN!");
+        return 0;
+    }
+    return sum;
+};
 
 Ms.hypot = Math.hypot || function() {
-        return Math.sqrt(C.each(arguments, function(arg) {
+        return Math.sqrt(Ms.sum(C.arrayEach(arguments, function(arg) {
             return arg * arg;
-        }).sum());
+        })));
     };
 
 Ms.log2 = Math.log2 || function(number) {
@@ -21,7 +37,7 @@ Ms.varInRange = function(v, v0, v1) {
 
 Ms.pointInRect = function(p, p0, p1) {
     var result = true;
-    C.each(p, function(ele, index) {
+    C.arrayEach(p, function(ele, index) {
         result &= Ms.varInRange(ele, p0[index], p1[index]);
     });
     return result;
@@ -34,7 +50,7 @@ Ms.pointInRect = function(p, p0, p1) {
  */
 Ms.max = function(list) {
     var mx = -Infinity;
-    C.each(list, function(v) {
+    C.arrayEach(list, function(v) {
         if (v > mx) mx = v;
     });
     return mx;
@@ -42,19 +58,20 @@ Ms.max = function(list) {
 
 Ms.min = function(list) {
     var mx = Infinity;
-    C.each(list, function(v) {
+    C.arrayEach(list, function(v) {
         if (v < mx) mx = v;
     });
     return mx;
 };
 
-Ms.maxValue = function(obj) {
-    return Ms.max(C.values(obj));
-};
-
-Ms.minValue = function(obj) {
-    return Ms.min(C.values(obj));
-};
+//dependes on `keys` and `values`
+// Ms.maxValue = function(obj) {
+//     return Ms.max(C.values(obj));
+// };
+//
+// Ms.minValue = function(obj) {
+//     return Ms.min(C.values(obj));
+// };
 
 /*
  * Individual Functions

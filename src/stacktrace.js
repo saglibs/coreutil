@@ -5,11 +5,21 @@ var log = (console.error || console.log);
 C.getStackTrace = function(title) {
     var callstack = "Referenced From: " + (title || "");
     var e = title instanceof Error ? title : new Error(callstack);
+    var split = e.stack.split('\n');
+    if (split.length > 1) {
+        var t = split[0];
+        //remove getStackTrace itself
+        split.shift();
+        split.shift();
+        split.unshift(t);
+        return split.join('\n');
+    }
     return e.stack;
 };
 
 C.printStackTrace = function(title, stackStack) {
-    stackStack = (stackStack || []).unshift(C.getStackTrace(title));
+    stackStack = stackStack || [];
+    stackStack.unshift(C.getStackTrace(title));
     var n = stackStack.length;
     var l = stackStack.length;
     for (l++; --l;) {

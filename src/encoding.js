@@ -8,19 +8,19 @@ var ES = {};
 /*
  * Possible input
  *
- * ArrayBuffer of raw data bytes
- * Array of raw data bytes
- * Array of char codes (UTF-16)
- * Raw data string
- * Unicode String
+ * 1 ArrayBuffer of raw data bytes
+ * 2 Array of raw data bytes
+ * 3 Array of char codes (UTF-16)
+ * 4 Raw data string
+ * 5 Unicode String
  *
  * Possible output
  *
- * ArrayBuffer of raw data bytes
- * Array of raw data bytes
- * Array of char codes (UTF-16)
- * String of raw data
- * Unicode String
+ * 1 ArrayBuffer of raw data bytes
+ * 2 Array of raw data bytes
+ * 3 Array of char codes (UTF-16)
+ * 4 String of raw data
+ * 5 Unicode String
  */
 
 var B10000000 = 0x80;
@@ -40,15 +40,6 @@ var B00111111 = 0x3F;
 //noinspection JSUnusedLocalSymbols
 var B01111111 = 0x7F;
 var B11111111 = 0xFF;
-
-/*
- * Unicode and GB2312 are character sets (charset)
- * Used for string
- * In javascript, all strings are presented in Unicode using UTF-16 encoding
- *
- * UTF-8 and ASCII are character representations (encoding)
- * Used for arrays
- */
 
 /*
  * Used for ArrayBuffer extension
@@ -127,11 +118,11 @@ function stringToUtf8ByteArray(str) {
             // UTF-16 encodes 0x10000-0x10FFFF by
             // subtracting 0x10000 and splitting the
             // 20 bits of 0x0-0xFFFFF into two halves
-            c = 0x10000 + (((c & 0x3ff)<<10)
+            c = 0x10000 + (((c & 0x3ff) << 10)
                 | (str.charCodeAt(i) & 0x3ff));
-            out[out.length] = 0xf0 | (c >>18);
-            out[out.length] = 0x80 | ((c >>12) & 0x3f);
-            out[out.length] = 0x80 | ((c >>6) & 0x3f);
+            out[out.length] = 0xf0 | (c >> 18);
+            out[out.length] = 0x80 | ((c >> 12) & 0x3f);
+            out[out.length] = 0x80 | ((c >> 6) & 0x3f);
             out[out.length] = 0x80 | (c & 0x3f);
         }
     }
@@ -168,9 +159,9 @@ function stringToArrayBuffer(str) {
             // subtracting 0x10000 and splitting the
             // 20 bits of 0x0-0xFFFFF into two halves
             c = 0x10000 + (((c & 0x3ff)<<10) | (c & 0x3ff));
-            out[out.length] = 0xf0 | (c >>18);
-            out[out.length] = 0x80 | ((c >>12) & 0x3f);
-            out[out.length] = 0x80 | ((c >>6) & 0x3f);
+            out[out.length] = 0xf0 | (c >> 18);
+            out[out.length] = 0x80 | ((c >> 12) & 0x3f);
+            out[out.length] = 0x80 | ((c >> 6) & 0x3f);
             out[out.length] = 0x80 | (c & 0x3f);
             pc += 4;
         }
@@ -318,11 +309,11 @@ function utf16ArrayToByteArray(ia) {
             // UTF-16 encodes 0x10000-0x10FFFF by
             // subtracting 0x10000 and splitting the
             // 20 bits of 0x0-0xFFFFF into two halves
-            c = 0x10000 + (((c & 0x3ff)<<10)
+            c = 0x10000 + (((c & 0x3ff) << 10)
                 | (ia.charCodeAt(i) & 0x3ff));
-            out[out.length] = 0xf0 | (c >>18);
-            out[out.length] = 0x80 | ((c >>12) & 0x3f);
-            out[out.length] = 0x80 | ((c >>6) & 0x3f);
+            out[out.length] = 0xf0 | (c >> 18);
+            out[out.length] = 0x80 | ((c >> 12) & 0x3f);
+            out[out.length] = 0x80 | ((c >> 6) & 0x3f);
             out[out.length] = 0x80 | (c & 0x3f);
             i++;
         }
