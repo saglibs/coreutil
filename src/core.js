@@ -14,6 +14,7 @@ var UrlUtils = require('./urlutils');
 var Uuids = require('./uuid');
 var Events = require('./event');
 var Iterator = require('./iterator');
+var Shims = require('./shims');
 //TODO: resultset
 
 var C = {};
@@ -31,6 +32,7 @@ _.extend(C, UrlUtils);
 _.extend(C, Uuids);
 _.extend(C, Events);
 _.extend(C, Iterator);
+_.extend(C, Shims);
 
 C.noop = function() {
     return function() {};

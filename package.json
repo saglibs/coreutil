@@ -1,10 +1,12 @@
 {
   "name": "coreutil",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "src/index.js",
+  "browser": ["src/index.js", "src/core.js"],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify src/index.js --standalone H -o dist/coreutil.js && browserify src/core.js --standalone H -o dist/corecore.js"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,8 @@
   "homepage": "https://github.com/saglibs/coreutil#readme",
   "dependencies": {
     "lodash": "^4.6.1"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0"
   }
 }
