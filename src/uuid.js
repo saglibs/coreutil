@@ -1,5 +1,14 @@
 var C = {};
 
+/**
+ * Generate Uuid
+ *
+ * @static
+ * @memberof H
+ * @param {Number} [len] length of target string, not specified by default
+ * @param {Number} [radix] when length specified, limit possible characters in the result
+ * @returns {string}
+ */
 C.uuid = function (len, radix) {
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
     var uuid = [], i;
@@ -26,6 +35,13 @@ C.uuid = function (len, radix) {
     return uuid.join('');
 };
 
+/**
+ * Generate Uuid in Default Format
+ *
+ * @static
+ * @memberof H
+ * @returns {string}
+ */
 C.fastUuid = function() {
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
     var uuid = new Array(36), rnd=0, r;

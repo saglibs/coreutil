@@ -11,12 +11,29 @@ C.QueryString = function(item){
 };
 
 /**
+ * @static
+ * @memberof H
  * @deprecated
  */
 C.Request = {
     QueryString: C.QueryString
 };
 
+/**
+ * Generate URL with GET param string
+ *
+ * @static
+ * @memberof H
+ * @param {String} [server] prefix string (domain)
+ * @param {String} [action] path of file requests
+ * @param {Object} [params] get param object
+ * @returns {string} URL string
+ * @example
+ *
+ * H.getUrlByParams("http://abc.def/", "path/of/file", {a: 1})
+ * =>
+ * "http://abc.def/path/of/file?a=1"
+ */
 C.getUrlByParams =  function(server, action, params) {
     var paramUrl = "";
     I.each(params, function(param, key) {
@@ -46,6 +63,19 @@ C.getUrlByParams =  function(server, action, params) {
     return (server + action + "?" + paramUrl.substr(1));
 };
 
+/**
+ * Generate simple param string from an object
+ *
+ * @static
+ * @memberof H
+ * @param {Object} [data] param object
+ * @returns {string}
+ * @example
+ *
+ * H.param({a:1, b:2})
+ * =>
+ * "a=1&b=2"
+ */
 C.param = function(data) {
     var s = [], add = function(k, v) {
         s[s.length] = encodeURIComponent(k) + "=" + encodeURIComponent(v);
