@@ -388,6 +388,10 @@ function hex(i) {
     return ("00" + (i & 0xff).toString(16)).slice(-2);
 }
 
+ES.getPrettyJson = function(jsonObject) {
+    return JSON.stringify(jsonObject, null, "\t");
+};
+
 ES.n2bin = numberToBinaryString;
 ES.hex = hex;
 

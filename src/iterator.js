@@ -19,6 +19,7 @@ I.resultWrapper = function(v) {
 };
 
 I.each = function(obj, fn, stackStack) {
+    stackStack = stackStack || [];
     var ret = I.resultWrapper(obj);
     if (C.debug) {
         C._each(obj, function(val, key, list) {
@@ -26,7 +27,7 @@ I.each = function(obj, fn, stackStack) {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
             } catch (e) {
-                e.printStackTrace(stackStack);
+                e.printStackTrace('Nested error', stackStack);
             }
         });
     } else {
@@ -41,6 +42,7 @@ I.each = function(obj, fn, stackStack) {
 I.every = C._each;
 
 I.until = function(data, fn, callable, stackStack) {
+    stackStack = stackStack || [];
     var ret = I.resultWrapper(data);
     if (C.debug) {
         C.find(data, function(val, key, list) {
@@ -49,7 +51,7 @@ I.until = function(data, fn, callable, stackStack) {
                 if (r) ret[key] = r;
                 return callable(val, key, list);
             } catch (e) {
-                e.printStackTrace(stackStack);
+                e.printStackTrace('Nested error', stackStack);
             }
         });
     } else {

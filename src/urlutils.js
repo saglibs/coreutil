@@ -1,11 +1,23 @@
-/*
- * Advanced General Utils
- */
+var C = {};
 
-var A = {};
 var I = require('./core');
+var D = require('./detect');
 
-A.getUrlByParams =  function(server, action, params) {
+var location = D.root.location || "";
+
+C.QueryString = function(item){
+    var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+    return svalue ? svalue[1] : svalue;
+};
+
+/**
+ * @deprecated
+ */
+C.Request = {
+    QueryString: C.QueryString
+};
+
+C.getUrlByParams =  function(server, action, params) {
     var paramUrl = "";
     I.each(params, function(param, key) {
         paramUrl += "&" + key + "=";
@@ -34,7 +46,7 @@ A.getUrlByParams =  function(server, action, params) {
     return (server + action + "?" + paramUrl.substr(1));
 };
 
-A.param = function(data) {
+C.param = function(data) {
     var s = [], add = function(k, v) {
         s[s.length] = encodeURIComponent(k) + "=" + encodeURIComponent(v);
     };
@@ -46,4 +58,4 @@ A.param = function(data) {
     return s.join("&").replace(/%20/g, "+");
 };
 
-module.exports = A;
+module.exports = C;

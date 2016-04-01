@@ -3,7 +3,9 @@
  */
 
 var O = {};
+require('./stacktrace');
 
+//variable type to be checked
 O.strContains = function(str, sub) {
     return str.indexOf(sub) !== -1;
 };
@@ -26,7 +28,7 @@ O.parseJson = function(json) {
 };
 
 O.cloneByParse = function(obj) {
-    //for small pure object only. json is not good for big object
+    //for small objects only
     return JSON.parse(JSON.stringify(obj));
 };
 
