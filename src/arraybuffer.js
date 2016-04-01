@@ -5,7 +5,7 @@ var A = {};
  *
  * @static
  * @memberof H
- * @param {Uint8Array} [byteView] uint8array object
+ * @param {Uint8Array} byteView uint8array object
  * @param {Number} [offset] byte offset
  * @param {boolean} [littleEndian] flag of is or is not little endian
  * @returns {Number}
@@ -36,7 +36,7 @@ A.readInt32 = function(byteView, offset, littleEndian) {
  *
  * @static
  * @memberof H
- * @param {Uint8Array} [byteView] uint8array object
+ * @param {Uint8Array} byteView uint8array object
  * @param {Number} [offset] byte offset
  * @param {boolean} [littleEndian] flag of is or is not little endian
  * @returns {Number}
@@ -62,7 +62,7 @@ var native = new Int8Array(new Int16Array([1]).buffer)[0] == 1;
  *
  * @static
  * @memberof H
- * @param {Uint8Array} [byteView] uint8array object
+ * @param {Uint8Array} byteView uint8array object
  * @param {Number} [offset] byte offset
  * @param {boolean} [littleEndian] flag of is or is not little endian
  * @returns {Number}

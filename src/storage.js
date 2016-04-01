@@ -12,21 +12,51 @@ if (Detect.isNodejs) {
     sessionStorage.setItem('test', '1');
     sessionStorage.removeItem('test');
 
+    /**
+     * Store value to session storage.
+     * In node.js environment, data will be stored in global variable `__sessionStorage` (lost on exit).
+     * In browsers without sessionStorage support, will try cookie first.
+     *
+     * @static
+     * @memberof H
+     * @param key
+     * @param value
+     */
     C.setItem = function(key, value) {
         sessionStorage.removeItem(key);
         sessionStorage.setItem(key, value);
     };
 
     /**
+     * Deprecated store value to session storage.
+     *
+     * @static
+     * @memberof H
      * @deprecated
+     * @param key
+     * @param value
      * @type {Function}
      */
     C.secAddItem = C.setItem;
 
+    /**
+     * Remove stored value of key in session storage.
+     *
+     * @static
+     * @memberof H
+     * @param key
+     */
     C.removeItem = function(key) {
         sessionStorage.removeItem(key);
     };
 
+    /**
+     * Retrieve stored value in session storage.
+     *
+     * @static
+     * @memberof H
+     * @param key
+     */
     C.getItem = function(key) {
         return sessionStorage.getItem(key);
     };

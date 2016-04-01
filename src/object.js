@@ -1,5 +1,7 @@
 /*
  * Object-Related Module
+ *
+ * TODO: to be doced
  */
 
 var O = {};

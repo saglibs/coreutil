@@ -62,8 +62,11 @@ var B11111111 = 0xFF;
 
 /**
  * Unicode Int Array -> Unicode String
- * @param ar
- * @returns {string}
+ *
+ * @static
+ * @memberof H
+ * @param {Array|ArrayBuffer|Uint8Array} ar unicode int array or arraybuffer
+ * @returns {string} unicode string
  */
 function unicodeIntArrayToString(ar) {
     if (ar instanceof ArrayBuffer) {
@@ -80,8 +83,11 @@ function unicodeIntArrayToString(ar) {
 
 /**
  * Unicode String -> Unicode Int Array
- * @param str
- * @returns {Array}
+ *
+ * @static
+ * @memberof H
+ * @param {String} str unicode string (including ascii string)
+ * @returns {Array} unicode int array
  */
 function stringToUnicodeIntArray(str) {
     var length = str.length;
@@ -94,8 +100,11 @@ function stringToUnicodeIntArray(str) {
 
 /**
  * Utf16 String -> Byte Array (represented in UTF-8)
- * @param str
- * @returns {Array}
+ *
+ * @static
+ * @memberof H
+ * @param {String} str unicode string
+ * @returns {Array} utf-8 byte array
  */
 function stringToUtf8ByteArray(str) {
     var out = [], l = str.length;
@@ -131,7 +140,11 @@ function stringToUtf8ByteArray(str) {
 
 /**
  * Utf16 String -> ArrayBuffer (Uint8Array) representing UTF-8
- * @param str
+ *
+ * @static
+ * @memberof H
+ * @param {String} str utf-16 string
+ * @return {Uint8Array} utf-8 arraybuffer
  */
 function stringToArrayBuffer(str) {
     var byteLength = str.length * 3;
@@ -186,8 +199,11 @@ var utf16ArrayToArrayBuffer = stringToArrayBuffer;
 /**
  * Byte Array (UTF-8) -> Unicode String
  * Uint8Array (UTF-8) -> Unicode String **bug here**
- * @param data
- * @returns {string}
+ *
+ * @static
+ * @memberof H
+ * @param {Array|ArrayBuffer|Uint8Array} data byte array or uint8array in UTF-8 encoding
+ * @returns {string} unicode string
  */
 function utf8ByteArrayToUnicodeString(data) { // array of bytes
     if (data instanceof ArrayBuffer) {
@@ -225,7 +241,11 @@ function utf8ByteArrayToUnicodeString(data) { // array of bytes
 /**
  * Byte Array (UTF-8 representation) -> Int Array (UTF-16 representation)
  * Uint8Array (UTF-8 representation) -> Int Array (UTF-16 representation)
- * @param arr
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Uint8Array|ArrayBuffer} arr byte array in UTF-8 encoding
+ * @return {Array} utf-16 int array
  */
 function byteArrayToUtf16Array(arr) {
     var used = 0;
@@ -288,8 +308,11 @@ function byteArrayToUtf16Array(arr) {
 
 /**
  * UTF-16 Int Array -> Byte Array (representing UTF-8 chars)
- * @param ia
- * @returns {Array}
+ *
+ * @static
+ * @memberof H
+ * @param {Array} ia utf-16 int array
+ * @returns {Array} utf-8 byte array
  */
 function utf16ArrayToByteArray(ia) {
     var out = [];
@@ -310,7 +333,7 @@ function utf16ArrayToByteArray(ia) {
             // subtracting 0x10000 and splitting the
             // 20 bits of 0x0-0xFFFFF into two halves
             c = 0x10000 + (((c & 0x3ff) << 10)
-                | (ia.charCodeAt(i) & 0x3ff));
+                | (ia[i] & 0x3ff));
             out[out.length] = 0xf0 | (c >> 18);
             out[out.length] = 0x80 | ((c >> 12) & 0x3f);
             out[out.length] = 0x80 | ((c >> 6) & 0x3f);
@@ -323,8 +346,11 @@ function utf16ArrayToByteArray(ia) {
 
 /**
  * ASCII String of UTF-8 Byte Array -> Unicode String
- * @param str
- * @returns {string}
+ *
+ * @static
+ * @memberof H
+ * @param {String} str ascii string of utf-8 byte array
+ * @returns {string} unicode string in utf-16 encoding
  */
 function utf8ByteStringToUnicodeString(str) {
     //bs -> ba
@@ -334,7 +360,11 @@ function utf8ByteStringToUnicodeString(str) {
 
 /**
  * Unicode String -> ASCII String of UTF-8 Byte Array
- * @param str
+ *
+ * @static
+ * @memberof H
+ * @param {String} str unicode string
+ * @return {String} ascii string of utf-8 encoded byte array
  */
 function unicodeStringToUtf8ByteString(str) {
     //us -> ba
@@ -344,8 +374,12 @@ function unicodeStringToUtf8ByteString(str) {
 
 /**
  * Raw String (UTF-8 Bytes) -> Uint8Array
- * no validality check,
- * @param str
+ * no validality check
+ *
+ * @static
+ * @memberof H
+ * @param {String} str ascii string in utf-8 encoding
+ * @return {Uint8Array} result arraybuffer
  */
 function utf8ByteStringToUint8Array(str) {
     var length = str.length;
@@ -362,8 +396,11 @@ function utf8ByteStringToUint8Array(str) {
 
 /**
  * Decimal String -> Binary String
- * @param d
- * @returns {string}
+ *
+ * @static
+ * @memberof H
+ * @param {String} d string of decimal number
+ * @returns {string} string of binary representation of the specific number
  */
 function numberToBinaryString(d) {
     return Number(d).toString(2);
@@ -373,10 +410,11 @@ function numberToBinaryString(d) {
 /**
  * String (might be byte string) -> Unicode string
  * but much (1x) slower than E.ba2s(E.s2a())
+ *
  * @private
  * @deprecated
- * @param str
- * @returns {string}
+ * @param {String} str unicode string
+ * @returns {string} utf8 string
  */
 function strintToUtf8String(str) {
     //noinspection JSDeprecatedSymbols
@@ -388,47 +426,170 @@ function hex(i) {
     return ("00" + (i & 0xff).toString(16)).slice(-2);
 }
 
+/**
+ * Get a well-printed JSON string
+ *
+ * @static
+ * @memberof H
+ * @param {Object} jsonObject json object to encode
+ */
 ES.getPrettyJson = function(jsonObject) {
     return JSON.stringify(jsonObject, null, "\t");
 };
 
+/**
+ * Alias of H.numberToBinaryString
+ *
+ * @static
+ * @memberof H
+ * @type {H.numberToBinaryString}
+ */
 ES.n2bin = numberToBinaryString;
+/**
+ * Get the hex representation string of a number (less than 256/0xFF)
+ *
+ * @static
+ * @memberof H
+ * @param {Number} i
+ * @returns {String} hex string
+ */
 ES.hex = hex;
 
 //3-5, 5-3; 3-4, 4-3; 1-4
 //Array of charcode <-> Unicode String
+/**
+ * ArrayBuffer to ByteString
+ * UnicodeIntArray to UnicodeString
+ *
+ * @static
+ * @memberof H
+ * @type {H.unicodeIntArrayToString}
+ */
 ES.ab2bs = ES.ua2s = unicodeIntArrayToString;
+/**
+ * UnicodeString to UnicodeIntArray
+ *
+ * @static
+ * @memberof H
+ * @type {H.stringToUnicodeIntArray}
+ */
 ES.s2ua = stringToUnicodeIntArray;
 
 //4-5, 5-4
 //Raw data string <-> Unicode String
+/**
+ * UnicodeString to AsciiByteString
+ *
+ * @static
+ * @memberof H
+ * @type {H.unicodeStringToUtf8ByteString}
+ */
 ES.us2bs = unicodeStringToUtf8ByteString;
+/**
+ * Utf-8 ByteString to UnicodeString
+ * @type {H.utf8ByteStringToUnicodeString}
+ */
 ES.bs2us = utf8ByteStringToUnicodeString;
 
 //2-5, 5-2; 2-4, 4-2; ?, 1-5
 //Unicode String <-> Array of raw data bytes
+/**
+ * Unicode String to ByteArray
+ *
+ * @static
+ * @memberof H
+ * @type {H.stringToUtf8ByteArray}
+ */
 ES.s2ba = stringToUtf8ByteArray; //str to binary arr (utf8)
+/**
+ * ByteArray to UnicodeString
+ * ArrayBuffer to UnicodeString
+ *
+ * @static
+ * @memberof H
+ * @type {H.utf8ByteArrayToUnicodeString}
+ */
 ES.ab2s = ES.ba2s = utf8ByteArrayToUnicodeString; //binary arr (utf8) to str
 
 //2-3, 3-2; 1-3
+/**
+ * ByteArray to Utf16IntArray
+ *
+ * @static
+ * @memberof H
+ * @type {H.byteArrayToUtf16Array}
+ */
 ES.ba2ia = byteArrayToUtf16Array; //binary array to int array
+/**
+ * Utf16IntArray to ByteArray
+ *
+ * @static
+ * @memberof H
+ * @type {H.utf16ArrayToByteArray}
+ */
 ES.ia2ba = utf16ArrayToByteArray;
 
 //meaningless: 1-2, 2-1
 
 //4-1
+/**
+ * AsciiByteString to ArrayBuffer
+ *
+ * @static
+ * @memberof H
+ * @type {H.utf8ByteStringToUint8Array}
+ */
 ES.bs2ab = utf8ByteStringToUint8Array;
 //5-1
+/**
+ * UnicodeString to ArrayBuffer(Uint8Array)
+ *
+ * @static
+ * @memberof H
+ * @type {H.stringToArrayBuffer}
+ */
 ES.s2ab = stringToArrayBuffer;
 //3-1
+/**
+ * IntArray to ArrayBuffer
+ *
+ * @static
+ * @memberof H
+ * @type {stringToArrayBuffer}
+ */
 ES.a2ab = utf16ArrayToArrayBuffer;
 
 //aliases
+/**
+ * Unicode CharArray to String, alias of H.ua2s
+ *
+ * @static
+ * @memberof H
+ * @type {*|unicodeIntArrayToString}
+ */
 ES.a2s = ES.ua2s; //unicode char array to str
+/**
+ * UnicodeString to UnicodeIntArray
+ *
+ * @static
+ * @memberof H
+ * @type {*|stringToUnicodeIntArray}
+ */
 ES.s2a = ES.s2ua; //str to unicode char array
 
+/**
+ * ByteArray to UnicodeIntArray, alias of E.ba2ia
+ * @type {*|byteArrayToUtf16Array}
+ */
 ES.ba2ua = ES.ba2ia; //alias
 
+/**
+ * String to UnicodeString
+ *
+ * @static
+ * @memberof H|E
+ * @type {H.utf8ByteStringToUnicodeString}
+ */
 ES.s2us = ES.bs2us;
 
 module.exports = ES;

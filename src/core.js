@@ -77,15 +77,30 @@ C.extend(String.prototype, {
     }
 });
 
-C.nonceStr = function() {
+/**
+ * Produce a random string in a fixed size. Output size is 16 by default.
+ *
+ * @static
+ * @memberof H
+ * @param {Number} [size] length of target string
+ * @returns {string}
+ */
+C.nonceStr = function(size) {
     var s = "";
     var c = "0123456789qwertyuiopasdfghjklzxcvbnm";
-    for (var i = 0; i < 16; i++) {
+    for (var i = 0; i < size || 16; i++) {
         s += c[parseInt(36 * Math.random())];
     }
     return s;
 };
 
+/**
+ * Clear timer
+ *
+ * @static
+ * @memberof H
+ * @param timer timer to clear
+ */
 C.clearTimer = function(timer) {
     if (timer) {
         clearInterval(timer);

@@ -7,7 +7,7 @@ C.now = Date.now;
  *
  * @static
  * @memberof H
- * @param {Function} [cb] function to run
+ * @param {Function} cb function to run
  * @returns {number} time in millis
  */
 C.test = function(cb) {
@@ -23,8 +23,8 @@ C.test = function(cb) {
  *
  * @static
  * @memberof H
- * @param {Function} [cb] function to run
- * @param {String} [title] title of this run
+ * @param {Function} cb function to run
+ * @param {String} title title of this run
  * @returns {number} time in millis
  */
 C.profile = function(cb, title) {
@@ -42,8 +42,8 @@ C.profile = function(cb, title) {
  *
  * @static
  * @memberof H
- * @param {Function} [cb] function to run
- * @param {Number} [times] times function will be executed
+ * @param {Function} cb function to run
+ * @param {Number} times times function will be executed
  */
 C.repeat = function(cb, times) {
     if (times > 0) {
@@ -58,8 +58,8 @@ C.repeat = function(cb, times) {
  *
  * @static
  * @memberof H
- * @param {Function} [cb] function to run
- * @param {Number} [times] times function will be executed
+ * @param {Function} cb function to run
+ * @param {Number} times times function will be executed
  */
 C.testTimes = function(cb, times) {
     C.test(function() {
@@ -72,9 +72,9 @@ C.testTimes = function(cb, times) {
  *
  * @static
  * @memberof H
- * @param {Function} [cb] function to run
- * @param {Number} [times] times function will be executed
- * @param {String} [title] title of this run
+ * @param {Function} cb function to run
+ * @param {Number} times times function will be executed
+ * @param {String} title title of this run
  */
 C.profileTimes = function(cb, times, title) {
     C.profile(function() {

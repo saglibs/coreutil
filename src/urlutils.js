@@ -24,9 +24,9 @@ C.Request = {
  *
  * @static
  * @memberof H
- * @param {String} [server] prefix string (domain)
- * @param {String} [action] path of file requests
- * @param {Object} [params] get param object
+ * @param {String} server prefix string (domain)
+ * @param {String} action path of file requests
+ * @param {Object} params get param object
  * @returns {string} URL string
  * @example
  *
@@ -36,7 +36,7 @@ C.Request = {
  */
 C.getUrlByParams =  function(server, action, params) {
     var paramUrl = "";
-    I.each(params, function(param, key) {
+    I.each(params || {}, function(param, key) {
         paramUrl += "&" + key + "=";
         var p = "";
         if (param instanceof Array) {
@@ -68,7 +68,7 @@ C.getUrlByParams =  function(server, action, params) {
  *
  * @static
  * @memberof H
- * @param {Object} [data] param object
+ * @param {Object} data param object
  * @returns {string}
  * @example
  *

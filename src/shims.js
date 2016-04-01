@@ -9,14 +9,15 @@ var noop = function() {
 
 var navigator = D.root.navigator || {userAgent: ""};
 
-//root.hasOwnProperty
-if (!root.hasOwnProperty) {
-    root.hasOwnProperty = function(p) {
-        //Note: in IE<9, p cannot be a function (for window)
-        return !!root[p];
-    };
-}
-
+/**
+ * Add property to object
+ *
+ * @static
+ * @memberof H
+ * @param {Object} object to operate
+ * @param {String} key field to fill in
+ * @param {Object} descriptor property descriptor
+ */
 var addProperty = noop();
 //defineProperty in IE8 only accepts DOM elements as parameters, while in Safari 5 it's opposite
 if (!Object.defineProperty || (0 < D.getIE() <= 8 && navigator.userAgent.indexOf('MSIE') !== -1)) {
@@ -47,6 +48,17 @@ if (!Object.defineProperty || (0 < D.getIE() <= 8 && navigator.userAgent.indexOf
     addProperty = Object.defineProperty;
 }
 
+/**
+ * Create object and copy all properties into it.
+ *
+ * @static
+ * @memberof H
+ * @param {Object} base base class
+ * @param {Object} reference object to copy properties from
+ * @example
+ *
+ * var obj = H.createObject(Object.prototype, {a: 1, b: 2})
+ */
 var createObject = function() {
     function F() {}
 

@@ -1,5 +1,7 @@
 /*
  * Iterator Logic Module
+ *
+ * TODO: to be doced
  */
 var C = require('./core');
 
@@ -22,7 +24,7 @@ I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(obj);
     if (C.debug) {
-        C._each(obj, function(val, key, list) {
+        C.each(obj, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
@@ -31,7 +33,7 @@ I.each = function(obj, fn, stackStack) {
             }
         });
     } else {
-        C._each(obj, function(val, key, list) {
+        C.each(obj, function(val, key, list) {
             var r = fn(val, key, list);
             if (r) ret[key] = r;
         });
@@ -39,7 +41,7 @@ I.each = function(obj, fn, stackStack) {
     return ret;
 };
 
-I.every = C._each;
+I.every = C.each;
 
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];

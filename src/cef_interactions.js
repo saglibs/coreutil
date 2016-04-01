@@ -3,6 +3,7 @@ var C = require('./detect');
 /*
  * Cef Interactions
  */
+//noinspection JSUnresolvedVariable
 var cefQuery = C.root.cefQuery || function() {
         if (this.debug) console.log(arguments[0]);
     };
