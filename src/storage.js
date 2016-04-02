@@ -1,5 +1,5 @@
 var C = {};
-var Error = require('./stacktrace');
+var H = require('./stacktrace');
 var Detect = require('./detect');
 
 if (Detect.isNodejs) {
@@ -62,7 +62,7 @@ if (Detect.isNodejs) {
     };
 
 } catch (e) {
-    Error.printStackTrace('Session Storage Not Supported');
+    H.printStackTrace('Session Storage Not Supported');
 
     C.secAddItem = function(key, value) {
         setCookie(key, value, 1);

@@ -1,20 +1,20 @@
 var _ = require('lodash/core');
 
-require('./raf');
+require('../src/raf');
 
-var Detect = require('./detect');
-var StackTrace = require('./stacktrace');
-var ArrayBufferOp = require('./arraybuffer');
-var CefInteractions = require('./cef_interactions');
-var Maths = require('./math');
-var Objects = require('./object');
-var Storage = require('./storage');
-var Tester = require('./testers');
-var UrlUtils = require('./urlutils');
-var Uuids = require('./uuid');
-var Events = require('./event');
-var Iterator = require('./iterator');
-var Shims = require('./shims');
+var Detect = require('../src/detect');
+var StackTrace = require('../src/stacktrace');
+var ArrayBufferOp = require('../src/arraybuffer');
+var CefInteractions = require('../src/cef_interactions');
+var Maths = require('../src/math');
+var Objects = require('../src/object');
+var Storage = require('../src/storage');
+var Tester = require('../src/testers');
+var UrlUtils = require('../src/urlutils');
+var Uuids = require('../src/uuid');
+var Events = require('../src/event');
+var Iterator = require('../src/iterator');
+var Shims = require('../src/shims');
 //TODO: resultset
 
 var C = {};

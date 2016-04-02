@@ -3,7 +3,7 @@
  *
  * TODO: to be doced
  */
-var C = require('./core');
+var C = require('../entries/core');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;

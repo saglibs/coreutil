@@ -4,7 +4,7 @@
 
 var Ms = {};
 var C = require('./minicore');
-var E = require('./stacktrace');
+var H = require('./stacktrace');
 
 /**
  * Sum a list of number
@@ -23,7 +23,7 @@ Ms.sum = function(list) {
         sum += list[length - 1];
     }
     if (isNaN(sum)) {
-        E.printStackTrace("NaN!");
+        H.printStackTrace("NaN!");
         return 0;
     }
     return sum;

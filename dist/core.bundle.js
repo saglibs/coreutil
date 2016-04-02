@@ -1,4 +1,115 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.H = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var _ = require('lodash/core');
+
+require('../src/raf');
+
+var Detect = require('../src/detect');
+var StackTrace = require('../src/stacktrace');
+var ArrayBufferOp = require('../src/arraybuffer');
+var CefInteractions = require('../src/cef_interactions');
+var Maths = require('../src/math');
+var Objects = require('../src/object');
+var Storage = require('../src/storage');
+var Tester = require('../src/testers');
+var UrlUtils = require('../src/urlutils');
+var Uuids = require('../src/uuid');
+var Events = require('../src/event');
+var Iterator = require('../src/iterator');
+var Shims = require('../src/shims');
+//TODO: resultset
+
+var C = {};
+
+_.extend(C, _);
+_.extend(C, Detect);
+_.extend(C, StackTrace);
+_.extend(C, ArrayBufferOp);
+_.extend(C, CefInteractions);
+_.extend(C, Maths);
+_.extend(C, Objects);
+_.extend(C, Storage);
+_.extend(C, Tester);
+_.extend(C, UrlUtils);
+_.extend(C, Uuids);
+_.extend(C, Events);
+_.extend(C, Iterator);
+_.extend(C, Shims);
+
+C.noop = function() {
+    return function() {};
+};
+
+C.now = Date.now;
+
+/*
+ * jQuery Shim
+ */
+//noinspection JSUnresolvedVariable
+if (C.root.jQuery) {
+    //noinspection JSUnresolvedVariable,JSUnusedGlobalSymbols
+    C.root.jQuery.fn.extend({
+        slideLeftHide: function( speed, callback ) {
+            //noinspection JSUnresolvedFunction
+            this.animate( {
+                width: "hide",
+                paddingLeft: "hide",
+                paddingRight: "hide",
+                marginLeft: "hide",
+                marginRight: "hide"
+            }, speed, callback);
+        },
+        slideLeftShow: function( speed, callback ) {
+            //noinspection JSUnresolvedFunction
+            this.animate( {
+                width: "show",
+                paddingLeft: "show",
+                paddingRight: "show",
+                marginLeft: "show",
+                marginRight: "show"
+            }, speed, callback);
+        }
+    });
+}
+
+//noinspection JSUnusedGlobalSymbols
+C.extend(String.prototype, {
+    replaceAll: function(s1,s2){
+        return this.replace(new RegExp(s1,"gm"),s2);
+    }
+});
+
+/**
+ * Produce a random string in a fixed size. Output size is 16 by default.
+ *
+ * @static
+ * @memberof H
+ * @param {Number} [size] length of target string
+ * @returns {string}
+ */
+C.nonceStr = function(size) {
+    var s = "";
+    var c = "0123456789qwertyuiopasdfghjklzxcvbnm";
+    for (var i = 0; i < size || 16; i++) {
+        s += c[parseInt(36 * Math.random())];
+    }
+    return s;
+};
+
+/**
+ * Clear timer
+ *
+ * @static
+ * @memberof H
+ * @param timer timer to clear
+ */
+C.clearTimer = function(timer) {
+    if (timer) {
+        clearInterval(timer);
+    }
+};
+
+module.exports = C;
+},{"../src/arraybuffer":9,"../src/cef_interactions":10,"../src/detect":11,"../src/event":12,"../src/iterator":13,"../src/math":14,"../src/object":16,"../src/raf":17,"../src/shims":18,"../src/stacktrace":19,"../src/storage":20,"../src/testers":21,"../src/urlutils":22,"../src/uuid":23,"lodash/core":4}],2:[function(require,module,exports){
 /**
  * The base implementation of `_.property` without support for deep paths.
  *
@@ -14,7 +125,7 @@ function baseProperty(key) {
 
 module.exports = baseProperty;
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var baseProperty = require('./_baseProperty');
 
 /**
@@ -32,7 +143,7 @@ var getLength = baseProperty('length');
 
 module.exports = getLength;
 
-},{"./_baseProperty":1}],3:[function(require,module,exports){
+},{"./_baseProperty":2}],4:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -4022,7 +4133,7 @@ module.exports = getLength;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var getLength = require('./_getLength'),
     isFunction = require('./isFunction'),
     isLength = require('./isLength');
@@ -4058,7 +4169,7 @@ function isArrayLike(value) {
 
 module.exports = isArrayLike;
 
-},{"./_getLength":2,"./isFunction":5,"./isLength":6}],5:[function(require,module,exports){
+},{"./_getLength":3,"./isFunction":6,"./isLength":7}],6:[function(require,module,exports){
 var isObject = require('./isObject');
 
 /** `Object#toString` result references. */
@@ -4102,7 +4213,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{"./isObject":7}],6:[function(require,module,exports){
+},{"./isObject":8}],7:[function(require,module,exports){
 /** Used as references for various `Number` constants. */
 var MAX_SAFE_INTEGER = 9007199254740991;
 
@@ -4140,7 +4251,7 @@ function isLength(value) {
 
 module.exports = isLength;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
@@ -4172,7 +4283,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var A = {};
 
 /**
@@ -4180,7 +4291,7 @@ var A = {};
  *
  * @static
  * @memberof H
- * @param {Uint8Array} [byteView] uint8array object
+ * @param {Uint8Array} byteView uint8array object
  * @param {Number} [offset] byte offset
  * @param {boolean} [littleEndian] flag of is or is not little endian
  * @returns {Number}
@@ -4211,7 +4322,7 @@ A.readInt32 = function(byteView, offset, littleEndian) {
  *
  * @static
  * @memberof H
- * @param {Uint8Array} [byteView] uint8array object
+ * @param {Uint8Array} byteView uint8array object
  * @param {Number} [offset] byte offset
  * @param {boolean} [littleEndian] flag of is or is not little endian
  * @returns {Number}
@@ -4237,7 +4348,7 @@ var native = new Int8Array(new Int16Array([1]).buffer)[0] == 1;
  *
  * @static
  * @memberof H
- * @param {Uint8Array} [byteView] uint8array object
+ * @param {Uint8Array} byteView uint8array object
  * @param {Number} [offset] byte offset
  * @param {boolean} [littleEndian] flag of is or is not little endian
  * @returns {Number}
@@ -4292,16 +4403,31 @@ A.readFloat32 = function(byteView, offset, littleEndian) {
 };
 
 module.exports = A;
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var C = require('./detect');
 
 /*
  * Cef Interactions
  */
+//noinspection JSUnresolvedVariable
 var cefQuery = C.root.cefQuery || function() {
         if (this.debug) console.log(arguments[0]);
     };
 
+/**
+ * Call Cef
+ *
+ * @static
+ * @memberof H
+ * @param {string} [req] request string
+ * @param {boolean} [persistent]
+ * @param {Function} [onsuccess] success callback
+ * @param {Function} [onfailure] failed callback
+ * @returns {undefined}
+ * @example
+ *
+ * H.callCef("selectItem:1", false, H.noop(), H.noop())
+ */
 C.callCef = function(req, persistent, onsuccess, onfailure) {
     return cefQuery({
         request: req || "",
@@ -4312,103 +4438,7 @@ C.callCef = function(req, persistent, onsuccess, onfailure) {
 };
 
 module.exports = C;
-},{"./detect":11}],10:[function(require,module,exports){
-var _ = require('lodash/core');
-
-require('./raf');
-
-var Detect = require('./detect');
-var StackTrace = require('./stacktrace');
-var ArrayBufferOp = require('./arraybuffer');
-var CefInteractions = require('./cef_interactions');
-var Maths = require('./math');
-var Objects = require('./object');
-var Storage = require('./storage');
-var Tester = require('./testers');
-var UrlUtils = require('./urlutils');
-var Uuids = require('./uuid');
-var Events = require('./event');
-var Iterator = require('./iterator');
-var Shims = require('./shims');
-//TODO: resultset
-
-var C = {};
-
-_.extend(C, _);
-_.extend(C, Detect);
-_.extend(C, StackTrace);
-_.extend(C, ArrayBufferOp);
-_.extend(C, CefInteractions);
-_.extend(C, Maths);
-_.extend(C, Objects);
-_.extend(C, Storage);
-_.extend(C, Tester);
-_.extend(C, UrlUtils);
-_.extend(C, Uuids);
-_.extend(C, Events);
-_.extend(C, Iterator);
-_.extend(C, Shims);
-
-C.noop = function() {
-    return function() {};
-};
-
-C.now = Date.now;
-
-/*
- * jQuery Shim
- */
-//noinspection JSUnresolvedVariable
-if (C.root.jQuery) {
-    //noinspection JSUnresolvedVariable,JSUnusedGlobalSymbols
-    C.root.jQuery.fn.extend({
-        slideLeftHide: function( speed, callback ) {
-            //noinspection JSUnresolvedFunction
-            this.animate( {
-                width: "hide",
-                paddingLeft: "hide",
-                paddingRight: "hide",
-                marginLeft: "hide",
-                marginRight: "hide"
-            }, speed, callback);
-        },
-        slideLeftShow: function( speed, callback ) {
-            //noinspection JSUnresolvedFunction
-            this.animate( {
-                width: "show",
-                paddingLeft: "show",
-                paddingRight: "show",
-                marginLeft: "show",
-                marginRight: "show"
-            }, speed, callback);
-        }
-    });
-}
-
-//noinspection JSUnusedGlobalSymbols
-C.extend(String.prototype, {
-    replaceAll: function(s1,s2){
-        return this.replace(new RegExp(s1,"gm"),s2);
-    }
-});
-
-C.nonceStr = function() {
-    var s = "";
-    var c = "0123456789qwertyuiopasdfghjklzxcvbnm";
-    for (var i = 0; i < 16; i++) {
-        s += c[parseInt(36 * Math.random())];
-    }
-    return s;
-};
-
-C.clearTimer = function(timer) {
-    if (timer) {
-        clearInterval(timer);
-    }
-};
-
-module.exports = C;
-},{"./arraybuffer":8,"./cef_interactions":9,"./detect":11,"./event":12,"./iterator":13,"./math":14,"./object":16,"./raf":17,"./shims":18,"./stacktrace":19,"./storage":20,"./testers":21,"./urlutils":22,"./uuid":23,"lodash/core":3}],11:[function(require,module,exports){
+},{"./detect":11}],11:[function(require,module,exports){
 /*
  * Env Detection Module
  */
@@ -4417,6 +4447,13 @@ var C = {};
 
 C.isArrayLike = require('lodash/isArrayLike');
 
+/**
+ * Flag of is in node.js environment or not.
+ *
+ * @static
+ * @memberof H
+ * @type {boolean}
+ */
 C.isNodejs = 'object' === typeof eval('process') && Object.prototype.toString.call(eval('process')) === '[object process]';
 
 C.root = {};
@@ -4434,10 +4471,19 @@ try {
 //noinspection JSUnresolvedVariable
 var root = C.root;
 
+//noinspection JSUnresolvedVariable
 root.navigator = root.navigator || {userAgent: ""};
 
 C.root = root;
 
+/**
+ * Get IE version.
+ * Returns 0 in non-IE environment.
+ *
+ * @static
+ * @memberof H
+ * @returns {number}
+ */
 C.getIE = function() {
     var MSIEs = navigator.userAgent.split('MSIE ')[1] || "0";
     var DNETs = navigator.userAgent.split('rv:')[1] || "0";
@@ -4458,6 +4504,14 @@ C.getIE = function() {
     return 0;
 };
 
+/**
+ * Check if is in IE or is in a specified version of IE.
+ *
+ * @static
+ * @memberof H
+ * @param {Number} [v] version to check
+ * @returns {boolean}
+ */
 C.isIE = function(v) {
     if (v !== undefined) {
         return C.getIE() == v;
@@ -4466,18 +4520,58 @@ C.isIE = function(v) {
     }
 };
 
-C.likeIE = C.getIE();
+/**
+ * Flag of is in IE.
+ *
+ * @static
+ * @memberof H
+ * @type {boolean}
+ */
+C.likeIE = !!C.getIE();
 
+/**
+ * Flag of is in browsers on iPhone.
+ *
+ * @static
+ * @memberof H
+ * @type {boolean}
+ */
 C.isiPhone = navigator.userAgent.indexOf('iPhone') !== -1;
 
+/**
+ * Flag of is in browsers of Lollipop systems
+ * @type {boolean}
+ */
 C.isLollipop = navigator.userAgent.indexOf('Android 5.') !== -1;
 
+//root.hasOwnProperty shims
+if (!root.hasOwnProperty) {
+    root.hasOwnProperty = function(p) {
+        //Note: in IE<9, p cannot be a function (for window)
+        return !!root[p];
+    };
+}
+
+/**
+ * Check if canvas drawing is supported in current browser.
+ *
+ * @static
+ * @memberof H
+ * @returns {boolean}
+ */
 C.isCanvasSupported = function () {
     if (C.isNodejs) return false;
     var canvas = document.createElement('canvas');
     return root.hasOwnProperty("__cv") ? root.__cv : root.__cv = !!(canvas.getContext && canvas.getContext('2d'));
 };
 
+/**
+ * Check if webgl drawing is supported in current browser.
+ *
+ * @static
+ * @memberof H
+ * @returns {boolean}
+ */
 C.isWebGLSupported = function () {
     if (C.isNodejs) return false;
     var canvas = document.createElement('canvas');
@@ -4487,39 +4581,105 @@ C.isWebGLSupported = function () {
 C.isCanvasSupported();
 C.isWebGLSupported();
 
+/**
+ * Language string
+ *
+ * @static
+ * @memberof H
+ * @type {string}
+ */
 C.language = C.isNodejs ? "" : (navigator.language || navigator['browserLanguage'] || "").toLowerCase();
 
 module.exports = C;
-},{"lodash/isArrayLike":4}],12:[function(require,module,exports){
+},{"lodash/isArrayLike":5}],12:[function(require,module,exports){
 /*
  * Custom Event Manipulation Module
  */
 
 var E = {};
 
-var C = require('./core');
+var H = require('./uuid');
+var C = require('./iterator');
 
+/**
+ * DOM event operators.
+ *
+ * @static
+ * @memberof H
+ * @type {{addHandler: E.Event.addHandler, removeHandler: E.Event.removeHandler}}
+ */
 E.Event = {
+    /**
+     * Add event handler
+     *
+     * @static
+     * @memberof H.Event
+     * @param {Element} oElement DOM element
+     * @param {String} sEvent event name
+     * @param {Function} fnHandler event handler
+     */
     addHandler: function (oElement, sEvent, fnHandler) {
+        sEvent[0] = sEvent[0].toUpperCase();
         oElement.addEventListener ? oElement.addEventListener(sEvent, fnHandler, false) : oElement.attachEvent("on" + sEvent, fnHandler)
     },
+    /**
+     * Remove event handler from dom element
+     *
+     * @static
+     * @memberof H.Event
+     * @param {Element} oElement DOM element
+     * @param {String} sEvent event name
+     * @param {Function} fnHandler event handler
+     */
     removeHandler: function (oElement, sEvent, fnHandler) {
-        oElement.removeEventListener ? oElement.removeEventListener(sEvent, fnHandler, false) : oElement.detachEvent("on" + sEvent, fnHandler)
+        sEvent[0] = sEvent[0].toUpperCase();
+        oElement.removeEventListener ? oElement.removeEventListener(sEvent, fnHandler, false) : oElement.detachEvent("on" + sEvent, fnHandler);
+        sEvent[0] = sEvent[0].toLowerCase();
+        oElement.removeEventListener ? oElement.removeEventListener(sEvent, fnHandler, false) : oElement.detachEvent("on" + sEvent, fnHandler);
     }
 };
 
+/**
+ * EventDispatcher
+ *
+ * @static
+ * @memberof H
+ * @returns {{listeners: {}, attachListener: H.EventDispatcher.attachListener, fire: H.EventDispatcher.fire, removeListener: H.EventDispatcher.removeListener, clearListener: H.EventDispatcher.clearListener}}
+ * @constructor
+ */
 E.EventDispatcher = function() {
     return {
         listeners: {},
+        /**
+         * Attach an listener listening on a channel
+         *
+         * @static
+         * @memberof H.EventDispatcher
+         * @param {String} key channel to listen
+         * @param {Function} cb listener body
+         * @returns {String} UUID String, listener identifier
+         */
         attachListener: function(key, cb) {
             this.listeners[key] = this.listeners[key] || {};
-            cb.uuid = cb.uuid || C.fastUuid();
+            //noinspection JSUnresolvedVariable
+            cb.uuid = cb.uuid || H.fastUuid();
+            //noinspection JSUnresolvedVariable
             this.listeners[key][cb.uuid] = cb;
+            //noinspection JSUnresolvedVariable
             return cb.uuid;
         },
+        /**
+         * Fire event at a channel now
+         *
+         * @static
+         * @memberof H.EventDispatcher
+         * @param {String} key event channel key to fire
+         * @param {*} [data] optional data to append
+         */
         fire: function(key, data) {
             if (this.listeners[key]) {
                 C.each(this.listeners[key], function(cb) {
+                    //noinspection JSUnresolvedVariable
                     if (cb && typeof cb === 'function' && !cb.blocked) {
                         try {
                             cb(data);
@@ -4530,13 +4690,29 @@ E.EventDispatcher = function() {
                 });
             }
         },
+        /**
+         * Remove a listener from a channel.
+         *
+         * @static
+         * @memberof H.EventDispatcher
+         * @param {String} key channel name
+         * @param {Function} func listener body
+         */
         removeListener: function(key, func) {
             if (this.listeners[key]) {
                 this.listeners[key] = C.each(this.listeners[key], function(listener) {
+                    //noinspection JSUnresolvedVariable
                     if (listener.uuid !== func.uuid) return listener;
                 }).merge();
             }
         },
+        /**
+         * Clear all listeners on a channel
+         *
+         * @static
+         * @memberof H.EventDispatcher
+         * @param {String} key channel key to clear
+         */
         clearListener: function(key) {
             this.listeners[key] = undefined;
             delete this.listeners[key];
@@ -4545,11 +4721,13 @@ E.EventDispatcher = function() {
 };
 
 module.exports = E;
-},{"./core":10}],13:[function(require,module,exports){
+},{"./iterator":13,"./uuid":23}],13:[function(require,module,exports){
 /*
  * Iterator Logic Module
+ *
+ * TODO: to be doced
  */
-var C = require('./core');
+var C = require('../entries/core');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;
@@ -4570,7 +4748,7 @@ I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(obj);
     if (C.debug) {
-        C._each(obj, function(val, key, list) {
+        C.each(obj, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
@@ -4579,7 +4757,7 @@ I.each = function(obj, fn, stackStack) {
             }
         });
     } else {
-        C._each(obj, function(val, key, list) {
+        C.each(obj, function(val, key, list) {
             var r = fn(val, key, list);
             if (r) ret[key] = r;
         });
@@ -4587,7 +4765,7 @@ I.each = function(obj, fn, stackStack) {
     return ret;
 };
 
-I.every = C._each;
+I.every = C.each;
 
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
@@ -4675,44 +4853,86 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"./core":10}],14:[function(require,module,exports){
+},{"../entries/core":1}],14:[function(require,module,exports){
 /*
  * Math-Related Module
  */
 
 var Ms = {};
 var C = require('./minicore');
-var E = require('./stacktrace');
+var H = require('./stacktrace');
 
+/**
+ * Sum a list of number
+ *
+ * @static
+ * @memberof H
+ * @param {Array} list
+ * @returns {number}
+ */
 Ms.sum = function(list) {
     if (!C.isArrayLike(list)) return 0;
     var sum = 0;
     var length = list.length;
     length++;
     while(--length) {
-        sum += list[length - 0];
+        sum += list[length - 1];
     }
     if (isNaN(sum)) {
-        E.printStackTrace("NaN!");
+        H.printStackTrace("NaN!");
         return 0;
     }
     return sum;
 };
 
+/**
+ * Hypot polyfill.
+ *
+ * @static
+ * @memberof H
+ * @type {Function}
+ */
 Ms.hypot = Math.hypot || function() {
         return Math.sqrt(Ms.sum(C.arrayEach(arguments, function(arg) {
             return arg * arg;
         })));
     };
 
+/**
+ * Log2 polyfill
+ *
+ * @static
+ * @memberof H
+ * @type {Function}
+ */
 Ms.log2 = Math.log2 || function(number) {
         return Math.log(number) / Math.log(2);
     };
 
+/**
+ * Check if a variable between given two numbers
+ *
+ * @static
+ * @memberof H
+ * @param {Number} v number to check
+ * @param {Number} v0 margin 1
+ * @param {Number} v1 margin 2
+ * @returns {boolean}
+ */
 Ms.varInRange = function(v, v0, v1) {
     return (v - v0) * (v - v1) < 0;
 };
 
+/**
+ * Check if a point [x, y] is inside the rectangle of two given points.
+ *
+ * @static
+ * @memberof H
+ * @param {Object} p point to check
+ * @param {Object} p0 point 1
+ * @param {Object} p1 point 2
+ * @returns {boolean}
+ */
 Ms.pointInRect = function(p, p0, p1) {
     var result = true;
     C.arrayEach(p, function(ele, index) {
@@ -4722,7 +4942,10 @@ Ms.pointInRect = function(p, p0, p1) {
 };
 
 /**
- * Extract max value. Support object
+ * Extract max value. Object not supported
+ *
+ * @static
+ * @memberof H
  * @param list
  * @returns {number}
  */
@@ -4734,6 +4957,14 @@ Ms.max = function(list) {
     return mx;
 };
 
+/**
+ * Extract min value. Object not supported
+ *
+ * @static
+ * @memberof H
+ * @param list
+ * @returns {number}
+ */
 Ms.min = function(list) {
     var mx = Infinity;
     C.arrayEach(list, function(v) {
@@ -4755,25 +4986,64 @@ Ms.min = function(list) {
  * Individual Functions
  */
 
+/**
+ * Degree to radian
+ *
+ * @static
+ * @memberof H
+ * @param {Number} degree degree value
+ * @returns {number} radian value
+ */
 Ms.degToRad = function(degree) {
     return (degree / 180.0) * Math.PI;
 };
 
+/**
+ * Radian to degree
+ *
+ * @static
+ * @memberof H
+ * @param {Number} rad radian value
+ * @returns {number} degree value
+ */
 Ms.radToDeg = function(rad) {
     return rad * 180.0 / Math.PI;
 };
 
+/**
+ * Normalize degree value to [0, 360)
+ *
+ * @static
+ * @memberof H
+ * @param {Number} degree degree value
+ * @returns {number} normalized degree value
+ */
 Ms.standardizeDegree = function(degree) {
     var floor = Math.floor(degree / 360.0);
     return degree - floor * 360.0;
 };
 
+/**
+ * Normalize radian value to [0, 2*PI)
+ *
+ * @static
+ * @memberof H
+ * @param {Number} rad radian value
+ * @returns {number} normalized radian value
+ */
 Ms.standardizeRad = function(rad) {
     var floor = Math.floor(rad / (2 * Math.PI));
     return rad - floor * 2 * Math.PI;
 };
 
-//in rad
+/**
+ * Convert point in rectangle coordinates to polar coordinates. (in radian)
+ *
+ * @static
+ * @memberof H
+ * @param {Array} coor rect coordinates
+ * @returns {*[]} polar coordinates
+ */
 Ms.rectToPolar = function(coor) {
     var r = Ms.hypot(coor[0], coor[1]);
     var absTheta = Math.atan2(Math.abs(coor[1]), Math.abs(coor[0])); // in rad
@@ -4789,33 +5059,85 @@ Ms.rectToPolar = function(coor) {
     }
 };
 
+/**
+ * Convert point in polar coordinates to rectangle coordinates.
+ *
+ * @static
+ * @memberof H
+ * @param {Array} coor polar coordinates
+ * @returns {*[]} rectangle coordinates
+ */
 Ms.polarToRect = function(coor) {
     var cA = Math.cos(coor[1]);
     var sA = Math.sin(coor[1]);
     return [coor[0] * cA, coor[0] * sA];
 };
 
+/**
+ * Convert distance in latitude to meter
+ *
+ * @static
+ * @memberof H
+ * @param {Number} delta distance represented in latitude
+ * @returns {number} distance in meter
+ */
 Ms.latToMeter = function(delta) {//in meters
     return 40008000 * delta / 360.0;
 };
 
+/**
+ * Convert distance in longtitude around some latitude to meter
+ *
+ * @static
+ * @memberof H
+ * @param {Number} lat latitude
+ * @param {Number} delta distance in longtitude
+ * @returns {number} distance in meter
+ */
 Ms.lngToMeterAtLat = function(lat, delta) {
     return delta * Math.cos(Math.PI * Math.abs(lat) / 180) * 40075040 / 360.0;
 };
 
+/**
+ * Convert distance in meter to distance in latitude
+ *
+ * @static
+ * @memberof H
+ * @param {Number} meter distance in meter
+ * @returns {number} distance in latitude
+ */
 Ms.meterToLat = function(meter) {
     return 360.0 * meter / 40008000;
 };
 
+/**
+ * Convert distance in meter to distance in longtitude around some latitude
+ *
+ * @static
+ * @memberof H
+ * @param {Number} lat latitude
+ * @param {Number} meter distance in meter
+ * @returns {number} distance in longtitude
+ */
 Ms.meterToLngAtLat = function(lat, meter) {
     return 360.0 * meter / (40075040 * Math.cos(Math.PI * Math.abs(lat) / 180));
 };
 
+/**
+ * Calculate the distance between two points on earth.
+ * Points are represented in 2-element arrays ([longtitude, latitude])
+ * Assuming the earth a perfect sphere.
+ *
+ * @static
+ * @memberof H
+ * @param {Array} p0 point 1
+ * @param {Array} p1 point 2
+ * @returns {number} distance in meters
+ */
 Ms.distOnEarth = function(p0, p1) {
     //[lng, lat], assuming earth a sphere
     return Math.PI * 6400000 * Math.acos(Math.cos(p0[0] - p1[0]) + Math.cos(p0[1] - p1[1]) - 1) / 180.0;
 };
-
 
 module.exports = Ms;
 },{"./minicore":15,"./stacktrace":19}],15:[function(require,module,exports){
@@ -4855,6 +5177,8 @@ module.exports = Mini;
 },{}],16:[function(require,module,exports){
 /*
  * Object-Related Module
+ *
+ * TODO: to be doced
  */
 
 var O = {};
@@ -4913,14 +5237,15 @@ var noop = function() {
 
 var navigator = D.root.navigator || {userAgent: ""};
 
-//root.hasOwnProperty
-if (!root.hasOwnProperty) {
-    root.hasOwnProperty = function(p) {
-        //Note: in IE<9, p cannot be a function (for window)
-        return !!root[p];
-    };
-}
-
+/**
+ * Add property to object
+ *
+ * @static
+ * @memberof H
+ * @param {Object} object to operate
+ * @param {String} key field to fill in
+ * @param {Object} descriptor property descriptor
+ */
 var addProperty = noop();
 //defineProperty in IE8 only accepts DOM elements as parameters, while in Safari 5 it's opposite
 if (!Object.defineProperty || (0 < D.getIE() <= 8 && navigator.userAgent.indexOf('MSIE') !== -1)) {
@@ -4951,6 +5276,17 @@ if (!Object.defineProperty || (0 < D.getIE() <= 8 && navigator.userAgent.indexOf
     addProperty = Object.defineProperty;
 }
 
+/**
+ * Create object and copy all properties into it.
+ *
+ * @static
+ * @memberof H
+ * @param {Object} base base class
+ * @param {Object} reference object to copy properties from
+ * @example
+ *
+ * var obj = H.createObject(Object.prototype, {a: 1, b: 2})
+ */
 var createObject = function() {
     function F() {}
 
@@ -5018,8 +5354,18 @@ module.exports = S;
 },{"./detect":11}],19:[function(require,module,exports){
 var C = {};
 
+var Mini = require('./minicore');
+
 var log = (console.error || console.log);
 
+/**
+ * Generate stack trace string. (separated by `\n`)
+ *
+ * @static
+ * @memberof H
+ * @param {String} [title]
+ * @returns {string} stack trace string
+ */
 C.getStackTrace = function(title) {
     var callstack = "Referenced From: " + (title || "");
     var e = title instanceof Error ? title : new Error(callstack);
@@ -5035,8 +5381,38 @@ C.getStackTrace = function(title) {
     return e.stack;
 };
 
+var DefaultNestedTitle = "Nested error:";
+var DefaultTitle = "Error:";
+
+/**
+ * Print stack trace stack.
+ *
+ * @static
+ * @memberof H
+ * @param {String|Error} [title] title or error of current layer
+ * @param {Array} [stackStack] stack trace stack (possibly)
+ * @example
+ *
+ * usage:
+ * H.printStackTrace(string/error, stackStack)
+ * H.printStackTrace(string/error)
+ * H.printStackTrace(stackStack)
+ * H.printStackTrace()
+ * variant:
+ * error.printStackTrace() -> printStackTrace(error, [])
+ */
 C.printStackTrace = function(title, stackStack) {
     stackStack = stackStack || [];
+    if (Mini.isArrayLike(title)) {
+        //noinspection JSValidateTypes for arguments
+        stackStack = title;
+        if (stackStack.length) {
+            title = DefaultNestedTitle;
+        } else {
+            title = DefaultTitle;
+        }
+    }
+    title = title || DefaultTitle;
     stackStack.unshift(C.getStackTrace(title));
     var n = stackStack.length;
     var l = stackStack.length;
@@ -5045,6 +5421,14 @@ C.printStackTrace = function(title, stackStack) {
     }
 };
 
+/**
+ * Print string with stack trace in debug mode.
+ *
+ * @static
+ * @memberof H
+ * @param {String|Error} [d] content to print
+ * @param {Array} [stackTrace] stack trace stack
+ */
 C.errlog = function(d, stackTrace) {
     if (C.debug) {
         C.printStackTrace(d);
@@ -5066,9 +5450,9 @@ Error.prototype.getStackTrace = C.getStackTrace;
 Error.prototype.printStackTrace = printStackTrace;
 
 module.exports = C;
-},{}],20:[function(require,module,exports){
+},{"./minicore":15}],20:[function(require,module,exports){
 var C = {};
-var Error = require('./stacktrace');
+var H = require('./stacktrace');
 var Detect = require('./detect');
 
 if (Detect.isNodejs) {
@@ -5081,27 +5465,57 @@ if (Detect.isNodejs) {
     sessionStorage.setItem('test', '1');
     sessionStorage.removeItem('test');
 
+    /**
+     * Store value to session storage.
+     * In node.js environment, data will be stored in global variable `__sessionStorage` (lost on exit).
+     * In browsers without sessionStorage support, will try cookie first.
+     *
+     * @static
+     * @memberof H
+     * @param key
+     * @param value
+     */
     C.setItem = function(key, value) {
         sessionStorage.removeItem(key);
         sessionStorage.setItem(key, value);
     };
 
     /**
+     * Deprecated store value to session storage.
+     *
+     * @static
+     * @memberof H
      * @deprecated
+     * @param key
+     * @param value
      * @type {Function}
      */
     C.secAddItem = C.setItem;
 
+    /**
+     * Remove stored value of key in session storage.
+     *
+     * @static
+     * @memberof H
+     * @param key
+     */
     C.removeItem = function(key) {
         sessionStorage.removeItem(key);
     };
 
+    /**
+     * Retrieve stored value in session storage.
+     *
+     * @static
+     * @memberof H
+     * @param key
+     */
     C.getItem = function(key) {
         return sessionStorage.getItem(key);
     };
 
 } catch (e) {
-    Error.printStackTrace('Session Storage Not Supported');
+    H.printStackTrace('Session Storage Not Supported');
 
     C.secAddItem = function(key, value) {
         setCookie(key, value, 1);
@@ -5152,6 +5566,14 @@ var C = {};
 
 C.now = Date.now;
 
+/**
+ * Run a function, count the time consumed.
+ *
+ * @static
+ * @memberof H
+ * @param {Function} cb function to run
+ * @returns {number} time in millis
+ */
 C.test = function(cb) {
     var o = C.now();
     cb();
@@ -5160,6 +5582,15 @@ C.test = function(cb) {
     return d;
 };
 
+/**
+ * Run a function, and record it in "Profile" tab in chromium.
+ *
+ * @static
+ * @memberof H
+ * @param {Function} cb function to run
+ * @param {String} title title of this run
+ * @returns {number} time in millis
+ */
 C.profile = function(cb, title) {
     console.profile(title || "Profile");
     var o = C.now();
@@ -5170,6 +5601,14 @@ C.profile = function(cb, title) {
     return d;
 };
 
+/**
+ * Do something for some times
+ *
+ * @static
+ * @memberof H
+ * @param {Function} cb function to run
+ * @param {Number} times times function will be executed
+ */
 C.repeat = function(cb, times) {
     if (times > 0) {
         do {
@@ -5178,12 +5617,29 @@ C.repeat = function(cb, times) {
     }
 };
 
+/**
+ * Test some method and record the time consumption for several times.
+ *
+ * @static
+ * @memberof H
+ * @param {Function} cb function to run
+ * @param {Number} times times function will be executed
+ */
 C.testTimes = function(cb, times) {
     C.test(function() {
         C.repeat(cb, times);
     });
 };
 
+/**
+ * Profile some method for several times.
+ *
+ * @static
+ * @memberof H
+ * @param {Function} cb function to run
+ * @param {Number} times times function will be executed
+ * @param {String} title title of this run
+ */
 C.profileTimes = function(cb, times, title) {
     C.profile(function() {
         C.repeat(cb, times);
@@ -5194,7 +5650,7 @@ module.exports = C;
 },{}],22:[function(require,module,exports){
 var C = {};
 
-var I = require('./core');
+var I = require('./iterator');
 var D = require('./detect');
 
 var location = D.root.location || "";
@@ -5205,15 +5661,32 @@ C.QueryString = function(item){
 };
 
 /**
+ * @static
+ * @memberof H
  * @deprecated
  */
 C.Request = {
     QueryString: C.QueryString
 };
 
+/**
+ * Generate URL with GET param string
+ *
+ * @static
+ * @memberof H
+ * @param {String} server prefix string (domain)
+ * @param {String} action path of file requests
+ * @param {Object} params get param object
+ * @returns {string} URL string
+ * @example
+ *
+ * H.getUrlByParams("http://abc.def/", "path/of/file", {a: 1})
+ * =>
+ * "http://abc.def/path/of/file?a=1"
+ */
 C.getUrlByParams =  function(server, action, params) {
     var paramUrl = "";
-    I.each(params, function(param, key) {
+    I.each(params || {}, function(param, key) {
         paramUrl += "&" + key + "=";
         var p = "";
         if (param instanceof Array) {
@@ -5240,6 +5713,19 @@ C.getUrlByParams =  function(server, action, params) {
     return (server + action + "?" + paramUrl.substr(1));
 };
 
+/**
+ * Generate simple param string from an object
+ *
+ * @static
+ * @memberof H
+ * @param {Object} data param object
+ * @returns {string}
+ * @example
+ *
+ * H.param({a:1, b:2})
+ * =>
+ * "a=1&b=2"
+ */
 C.param = function(data) {
     var s = [], add = function(k, v) {
         s[s.length] = encodeURIComponent(k) + "=" + encodeURIComponent(v);
@@ -5253,9 +5739,18 @@ C.param = function(data) {
 };
 
 module.exports = C;
-},{"./core":10,"./detect":11}],23:[function(require,module,exports){
+},{"./detect":11,"./iterator":13}],23:[function(require,module,exports){
 var C = {};
 
+/**
+ * Generate Uuid
+ *
+ * @static
+ * @memberof H
+ * @param {Number} [len] length of target string, not specified by default
+ * @param {Number} [radix] when length specified, limit possible characters in the result
+ * @returns {string}
+ */
 C.uuid = function (len, radix) {
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
     var uuid = [], i;
@@ -5282,6 +5777,13 @@ C.uuid = function (len, radix) {
     return uuid.join('');
 };
 
+/**
+ * Generate Uuid in Default Format
+ *
+ * @static
+ * @memberof H
+ * @returns {string}
+ */
 C.fastUuid = function() {
     var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
     var uuid = new Array(36), rnd=0, r;
@@ -5301,5 +5803,4 @@ C.fastUuid = function() {
 };
 
 module.exports = C;
-},{}]},{},[10])(10)
-});
+},{}]},{},[1]);

@@ -1,6 +1,6 @@
 var C = {};
 
-var I = require('./core');
+var I = require('./iterator');
 var D = require('./detect');
 
 var location = D.root.location || "";

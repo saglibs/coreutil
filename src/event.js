@@ -4,7 +4,8 @@
 
 var E = {};
 
-var C = require('./core');
+var H = require('./uuid');
+var C = require('./iterator');
 
 /**
  * DOM event operators.
@@ -49,7 +50,7 @@ E.Event = {
  *
  * @static
  * @memberof H
- * @returns {{listeners: {}, attachListener: attachListener, fire: fire, removeListener: removeListener, clearListener: clearListener}}
+ * @returns {{listeners: {}, attachListener: H.EventDispatcher.attachListener, fire: H.EventDispatcher.fire, removeListener: H.EventDispatcher.removeListener, clearListener: H.EventDispatcher.clearListener}}
  * @constructor
  */
 E.EventDispatcher = function() {
@@ -67,7 +68,7 @@ E.EventDispatcher = function() {
         attachListener: function(key, cb) {
             this.listeners[key] = this.listeners[key] || {};
             //noinspection JSUnresolvedVariable
-            cb.uuid = cb.uuid || C.fastUuid();
+            cb.uuid = cb.uuid || H.fastUuid();
             //noinspection JSUnresolvedVariable
             this.listeners[key][cb.uuid] = cb;
             //noinspection JSUnresolvedVariable
