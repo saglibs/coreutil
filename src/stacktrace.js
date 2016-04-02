@@ -1,6 +1,6 @@
 var C = {};
 
-var Mini = require('./minicore');
+var Mini = require('../mini');
 
 var log = (console.error || console.log);
 

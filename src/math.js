@@ -3,7 +3,7 @@
  */
 
 var Ms = {};
-var C = require('./minicore');
+var C = require('../mini');
 var H = require('./stacktrace');
 
 /**

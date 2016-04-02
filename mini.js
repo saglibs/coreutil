@@ -26,7 +26,6 @@ Mini.isArrayLike = isArrayLike;
 /**
  * Iterates on an array. Fast and should not be used on objects.
  *
- * @private
  * @param {Array} array
  * @param {Function} iteratee
  * @returns {Array} result map

@@ -109,7 +109,55 @@ C.clearTimer = function(timer) {
 };
 
 module.exports = C;
-},{"./src/arraybuffer":9,"./src/cef_interactions":10,"./src/detect":11,"./src/event":12,"./src/iterator":13,"./src/math":14,"./src/object":16,"./src/raf":17,"./src/shims":18,"./src/stacktrace":19,"./src/storage":20,"./src/testers":21,"./src/urlutils":22,"./src/uuid":23,"lodash/core":4}],2:[function(require,module,exports){
+},{"./src/arraybuffer":10,"./src/cef_interactions":11,"./src/detect":12,"./src/event":13,"./src/iterator":14,"./src/math":15,"./src/object":16,"./src/raf":17,"./src/shims":18,"./src/stacktrace":19,"./src/storage":20,"./src/testers":21,"./src/urlutils":22,"./src/uuid":23,"lodash/core":5}],2:[function(require,module,exports){
+/*
+ * MiniCore module
+ *
+ * Provides a simplest set of some basic utils.
+ * Should be used internally.
+ */
+
+var Mini = {};
+
+var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+var isArrayLike = function(collection) {
+    if (collection === null || collection === undefined) return 0;
+    var length = collection['length'];
+    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
+};
+
+/**
+ * Check if something is array-like
+ *
+ * @param collection anything to check
+ * @return {boolean}
+ * @type {isArrayLike}
+ */
+Mini.isArrayLike = isArrayLike;
+
+/**
+ * Iterates on an array. Fast and should not be used on objects.
+ *
+ * @param {Array} array
+ * @param {Function} iteratee
+ * @returns {Array} result map
+ */
+Mini.arrayEach = function(array, iteratee) {
+    var length = array.length;
+
+    if (isArrayLike(array) && length > 0) {
+        var result = [];
+        var n = length;
+        length++;
+        while (--length) {
+            result[n - length] = iteratee(array[n - length]);
+        }
+        return result;
+    }
+};
+
+module.exports = Mini;
+},{}],3:[function(require,module,exports){
 /**
  * The base implementation of `_.property` without support for deep paths.
  *
@@ -125,7 +173,7 @@ function baseProperty(key) {
 
 module.exports = baseProperty;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var baseProperty = require('./_baseProperty');
 
 /**
@@ -143,7 +191,7 @@ var getLength = baseProperty('length');
 
 module.exports = getLength;
 
-},{"./_baseProperty":2}],4:[function(require,module,exports){
+},{"./_baseProperty":3}],5:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -4133,7 +4181,7 @@ module.exports = getLength;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var getLength = require('./_getLength'),
     isFunction = require('./isFunction'),
     isLength = require('./isLength');
@@ -4169,7 +4217,7 @@ function isArrayLike(value) {
 
 module.exports = isArrayLike;
 
-},{"./_getLength":3,"./isFunction":6,"./isLength":7}],6:[function(require,module,exports){
+},{"./_getLength":4,"./isFunction":7,"./isLength":8}],7:[function(require,module,exports){
 var isObject = require('./isObject');
 
 /** `Object#toString` result references. */
@@ -4213,7 +4261,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{"./isObject":8}],7:[function(require,module,exports){
+},{"./isObject":9}],8:[function(require,module,exports){
 /** Used as references for various `Number` constants. */
 var MAX_SAFE_INTEGER = 9007199254740991;
 
@@ -4251,7 +4299,7 @@ function isLength(value) {
 
 module.exports = isLength;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
@@ -4283,7 +4331,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var A = {};
 
 /**
@@ -4403,7 +4451,7 @@ A.readFloat32 = function(byteView, offset, littleEndian) {
 };
 
 module.exports = A;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var C = require('./detect');
 
 /*
@@ -4438,7 +4486,7 @@ C.callCef = function(req, persistent, onsuccess, onfailure) {
 };
 
 module.exports = C;
-},{"./detect":11}],11:[function(require,module,exports){
+},{"./detect":12}],12:[function(require,module,exports){
 /*
  * Env Detection Module
  */
@@ -4591,7 +4639,7 @@ C.isWebGLSupported();
 C.language = C.isNodejs ? "" : (navigator.language || navigator['browserLanguage'] || "").toLowerCase();
 
 module.exports = C;
-},{"lodash/isArrayLike":5}],12:[function(require,module,exports){
+},{"lodash/isArrayLike":6}],13:[function(require,module,exports){
 /*
  * Custom Event Manipulation Module
  */
@@ -4721,7 +4769,7 @@ E.EventDispatcher = function() {
 };
 
 module.exports = E;
-},{"./iterator":13,"./uuid":23}],13:[function(require,module,exports){
+},{"./iterator":14,"./uuid":23}],14:[function(require,module,exports){
 /*
  * Iterator Logic Module
  */
@@ -4914,13 +4962,13 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../core":1}],14:[function(require,module,exports){
+},{"../core":1}],15:[function(require,module,exports){
 /*
  * Math-Related Module
  */
 
 var Ms = {};
-var C = require('./minicore');
+var C = require('../mini');
 var H = require('./stacktrace');
 
 /**
@@ -5201,56 +5249,7 @@ Ms.distOnEarth = function(p0, p1) {
 };
 
 module.exports = Ms;
-},{"./minicore":15,"./stacktrace":19}],15:[function(require,module,exports){
-/*
- * MiniCore module
- *
- * Provides a simplest set of some basic utils.
- * Should be used internally.
- */
-
-var Mini = {};
-
-var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-var isArrayLike = function(collection) {
-    if (collection === null || collection === undefined) return 0;
-    var length = collection['length'];
-    return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
-};
-
-/**
- * Check if something is array-like
- *
- * @param collection anything to check
- * @return {boolean}
- * @type {isArrayLike}
- */
-Mini.isArrayLike = isArrayLike;
-
-/**
- * Iterates on an array. Fast and should not be used on objects.
- *
- * @private
- * @param {Array} array
- * @param {Function} iteratee
- * @returns {Array} result map
- */
-Mini.arrayEach = function(array, iteratee) {
-    var length = array.length;
-
-    if (isArrayLike(array) && length > 0) {
-        var result = [];
-        var n = length;
-        length++;
-        while (--length) {
-            result[n - length] = iteratee(array[n - length]);
-        }
-        return result;
-    }
-};
-
-module.exports = Mini;
-},{}],16:[function(require,module,exports){
+},{"../mini":2,"./stacktrace":19}],16:[function(require,module,exports){
 /*
  * Object-Related Module
  */
@@ -5326,7 +5325,7 @@ root.requestAnimationFrame = (function() {
             return root.setTimeout(callback, 1000 / 60);
         };
 })();
-},{"./detect":11}],18:[function(require,module,exports){
+},{"./detect":12}],18:[function(require,module,exports){
 var S = {};
 
 var D = require('./detect');
@@ -5452,10 +5451,10 @@ S.addProperty = addProperty;
 S.createObject = createObject;
 
 module.exports = S;
-},{"./detect":11}],19:[function(require,module,exports){
+},{"./detect":12}],19:[function(require,module,exports){
 var C = {};
 
-var Mini = require('./minicore');
+var Mini = require('../mini');
 
 var log = (console.error || console.log);
 
@@ -5551,7 +5550,7 @@ Error.prototype.getStackTrace = C.getStackTrace;
 Error.prototype.printStackTrace = printStackTrace;
 
 module.exports = C;
-},{"./minicore":15}],20:[function(require,module,exports){
+},{"../mini":2}],20:[function(require,module,exports){
 var C = {};
 var H = require('./stacktrace');
 var Detect = require('./detect');
@@ -5662,7 +5661,7 @@ function removeItemFallback(key) {
 }
 
 module.exports = C;
-},{"./detect":11,"./stacktrace":19}],21:[function(require,module,exports){
+},{"./detect":12,"./stacktrace":19}],21:[function(require,module,exports){
 var C = {};
 
 C.now = Date.now;
@@ -5840,7 +5839,7 @@ C.param = function(data) {
 };
 
 module.exports = C;
-},{"./detect":11,"./iterator":13}],23:[function(require,module,exports){
+},{"./detect":12,"./iterator":14}],23:[function(require,module,exports){
 var C = {};
 
 /**
