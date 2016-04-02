@@ -1,20 +1,20 @@
 var _ = require('lodash/core');
 
-require('../src/raf');
+require('./src/raf');
 
-var Detect = require('../src/detect');
-var StackTrace = require('../src/stacktrace');
-var ArrayBufferOp = require('../src/arraybuffer');
-var CefInteractions = require('../src/cef_interactions');
-var Maths = require('../src/math');
-var Objects = require('../src/object');
-var Storage = require('../src/storage');
-var Tester = require('../src/testers');
-var UrlUtils = require('../src/urlutils');
-var Uuids = require('../src/uuid');
-var Events = require('../src/event');
-var Iterator = require('../src/iterator');
-var Shims = require('../src/shims');
+var Detect = require('./src/detect');
+var StackTrace = require('./src/stacktrace');
+var ArrayBufferOp = require('./src/arraybuffer');
+var CefInteractions = require('./src/cef_interactions');
+var Maths = require('./src/math');
+var Objects = require('./src/object');
+var Storage = require('./src/storage');
+var Tester = require('./src/testers');
+var UrlUtils = require('./src/urlutils');
+var Uuids = require('./src/uuid');
+var Events = require('./src/event');
+var Iterator = require('./src/iterator');
+var Shims = require('./src/shims');
 //TODO: resultset
 
 var C = {};

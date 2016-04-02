@@ -7,20 +7,23 @@ var tap        = require('gulp-tap');
 var uglify     = require('gulp-uglify');
 var gutil      = require('gulp-util');
 var source     = require('vinyl-source-stream');
+var del        = require('del');
 
 gulp.task('default', function () {
 
+    del(['./dist/**/*']);
+
     //noinspection JSUnresolvedFunction
-    var coreStream = browserify('./entries/core.js').bundle()
+    var coreStream = browserify('./core.js').bundle()
         .pipe(source('core.bundle.js'))
         .pipe(gulp.dest('./dist'));
 
     //noinspection JSUnresolvedFunction
-    var utilStream = browserify('./entries/util.js').bundle()
-        .pipe(source('util.bundle.js'))
+    var utilStream = browserify('./utils.js').bundle()
+        .pipe(source('utils.bundle.js'))
         .pipe(gulp.dest('./dist'));
 
-    var minStream = gulp.src(['./entries/core.js', './entries/util.js'], {read: false}) // no need of reading file because browserify does.
+    var minStream = gulp.src(['./core.js', './utils.js'], {read: false}) // no need of reading file because browserify does.
         // transform file objects using gulp-tap plugin
         .pipe(tap(function (file) {
             gutil.log('bundling ' + file.path);

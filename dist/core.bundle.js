@@ -1,21 +1,21 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var _ = require('lodash/core');
 
-require('../src/raf');
+require('./src/raf');
 
-var Detect = require('../src/detect');
-var StackTrace = require('../src/stacktrace');
-var ArrayBufferOp = require('../src/arraybuffer');
-var CefInteractions = require('../src/cef_interactions');
-var Maths = require('../src/math');
-var Objects = require('../src/object');
-var Storage = require('../src/storage');
-var Tester = require('../src/testers');
-var UrlUtils = require('../src/urlutils');
-var Uuids = require('../src/uuid');
-var Events = require('../src/event');
-var Iterator = require('../src/iterator');
-var Shims = require('../src/shims');
+var Detect = require('./src/detect');
+var StackTrace = require('./src/stacktrace');
+var ArrayBufferOp = require('./src/arraybuffer');
+var CefInteractions = require('./src/cef_interactions');
+var Maths = require('./src/math');
+var Objects = require('./src/object');
+var Storage = require('./src/storage');
+var Tester = require('./src/testers');
+var UrlUtils = require('./src/urlutils');
+var Uuids = require('./src/uuid');
+var Events = require('./src/event');
+var Iterator = require('./src/iterator');
+var Shims = require('./src/shims');
 //TODO: resultset
 
 var C = {};
@@ -109,7 +109,7 @@ C.clearTimer = function(timer) {
 };
 
 module.exports = C;
-},{"../src/arraybuffer":9,"../src/cef_interactions":10,"../src/detect":11,"../src/event":12,"../src/iterator":13,"../src/math":14,"../src/object":16,"../src/raf":17,"../src/shims":18,"../src/stacktrace":19,"../src/storage":20,"../src/testers":21,"../src/urlutils":22,"../src/uuid":23,"lodash/core":4}],2:[function(require,module,exports){
+},{"./src/arraybuffer":9,"./src/cef_interactions":10,"./src/detect":11,"./src/event":12,"./src/iterator":13,"./src/math":14,"./src/object":16,"./src/raf":17,"./src/shims":18,"./src/stacktrace":19,"./src/storage":20,"./src/testers":21,"./src/urlutils":22,"./src/uuid":23,"lodash/core":4}],2:[function(require,module,exports){
 /**
  * The base implementation of `_.property` without support for deep paths.
  *
@@ -4724,12 +4724,24 @@ module.exports = E;
 },{"./iterator":13,"./uuid":23}],13:[function(require,module,exports){
 /*
  * Iterator Logic Module
- *
- * TODO: to be doced
  */
-var C = require('../entries/core');
+var C = require('../core');
 
 var I = function(template) {
+    I.template = template || I.resultWrapper;
+    return I;
+};
+
+/**
+ * Set the default result template.
+ * A result template will be used to produce a result object according to the input value.
+ *
+ * @static
+ * @param {Function} template
+ * @returns {I}
+ * @constructor
+ */
+I.setTemplate = function(template) {
     I.template = template || I.resultWrapper;
     return I;
 };
@@ -4744,6 +4756,16 @@ I.resultWrapper = function(v) {
     return (v === undefined || v === null) ? {} : (C.isArrayLike(v) ? [] : {});
 };
 
+/**
+ * Iterates an object or an array with an iteratee and a stack of stack trace
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} obj
+ * @param {Function} fn
+ * @param {Array|String} [stackStack]
+ * @return {Array|Object} return mapped results of the input object
+ */
 I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(obj);
@@ -4753,7 +4775,8 @@ I.each = function(obj, fn, stackStack) {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
             } catch (e) {
-                e.printStackTrace('Nested error', stackStack);
+                //E.printStackTrace only accepts one parameter
+                e.printStackTrace(stackStack);
             }
         });
     } else {
@@ -4765,8 +4788,22 @@ I.each = function(obj, fn, stackStack) {
     return ret;
 };
 
+/**
+ * Just iterate the input object
+ * @type {function((Array|Object), Function=): (Array|Object)}
+ */
 I.every = C.each;
 
+/**
+ * Iterator function with early quit.
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} data data to iterate
+ * @param {Function} fn function to yield result of each input
+ * @param {Function} callable function to check if the itearting should be terminated
+ * @param {Array} [stackStack] stack trace stack
+ */
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(data);
@@ -4790,8 +4827,14 @@ I.until = function(data, fn, callable, stackStack) {
     return ret;
 };
 
-/*
+/**
+ * Iterate all keys on the object. (indices on arrays)
  * Would prefer H.each(H.keys())
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} data data to iterate
+ * @param {Function} callable iteratee to yield result
  */
 I.eachKey = function(data, callable) {
     var keys = data;
@@ -4805,6 +4848,18 @@ I.eachKey = function(data, callable) {
     }
 };
 
+/**
+ * Iterate on a range of numbers.
+ *
+ * @static
+ * @memberof H
+ * @return {Array|Object}
+ * @example
+ *
+ * H.eachIndex(4, function() {}) => 4x undefined
+ * H.eachIndex(1, 4, function() {}) => 3x undefined
+ * H.eachIndex(2, 4, 2, function() {}) => 1x undefined
+ */
 I.eachIndex = function() {
     var length = arguments.length;
     //accept 2-4 arguments only.
@@ -4819,7 +4874,7 @@ I.eachIndex = function() {
     //end, iteratee
     //start, end, iteratee
     //start, end, step, iteratee
-    var rs = I.resultWrapper();
+    var rs = I.resultWrapper([]);
     var i = 0;
 
     if (step === 1) {
@@ -4840,6 +4895,12 @@ I.eachIndex = function() {
     }
 };
 
+/**
+ * Iterator discarding values.
+ *
+ * @param {Array|Object} ele object to iterate
+ * @param {Function} fn iteratee to produce values
+ */
 I.filter = function(ele, fn) {
     if (fn === undefined) {
         fn = ele;
@@ -4853,7 +4914,7 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../entries/core":1}],14:[function(require,module,exports){
+},{"../core":1}],14:[function(require,module,exports){
 /*
  * Math-Related Module
  */
@@ -5157,8 +5218,23 @@ var isArrayLike = function(collection) {
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
 };
 
+/**
+ * Check if something is array-like
+ *
+ * @param collection anything to check
+ * @return {boolean}
+ * @type {isArrayLike}
+ */
 Mini.isArrayLike = isArrayLike;
 
+/**
+ * Iterates on an array. Fast and should not be used on objects.
+ *
+ * @private
+ * @param {Array} array
+ * @param {Function} iteratee
+ * @returns {Array} result map
+ */
 Mini.arrayEach = function(array, iteratee) {
     var length = array.length;
 
@@ -5177,18 +5253,34 @@ module.exports = Mini;
 },{}],16:[function(require,module,exports){
 /*
  * Object-Related Module
- *
- * TODO: to be doced
  */
 
 var O = {};
 require('./stacktrace');
 
 //variable type to be checked
+/**
+ * Checks if the target string contains a charsequence.
+ *
+ * @static
+ * @memberof H
+ * @param {String} str target string
+ * @param {String} sub substring to check
+ * @returns {boolean}
+ */
 O.strContains = function(str, sub) {
     return str.indexOf(sub) !== -1;
 };
 
+/**
+ * Checks if the target string contains a charsequence ignoring the char case.
+ *
+ * @static
+ * @memberof H
+ * @param {String} str target string
+ * @param {String} sub substring to check
+ * @returns {boolean}
+ */
 O.strContainsIgnoreCase = function(str, sub) {
     return str.toLowerCase().indexOf(sub.toLowerCase()) !== -1;
 };
@@ -5206,6 +5298,15 @@ O.parseJson = function(json) {
     return undefined;
 };
 
+/**
+ * Clones the object via JSON.
+ * Should be used on small plain javascript objects only.
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} obj
+ * @return {Object} cloned object
+ */
 O.cloneByParse = function(obj) {
     //for small objects only
     return JSON.parse(JSON.stringify(obj));

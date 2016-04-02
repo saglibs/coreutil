@@ -1,21 +1,21 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var _ = require('lodash/core');
 
-require('../src/raf');
+require('./src/raf');
 
-var Detect = require('../src/detect');
-var StackTrace = require('../src/stacktrace');
-var ArrayBufferOp = require('../src/arraybuffer');
-var CefInteractions = require('../src/cef_interactions');
-var Maths = require('../src/math');
-var Objects = require('../src/object');
-var Storage = require('../src/storage');
-var Tester = require('../src/testers');
-var UrlUtils = require('../src/urlutils');
-var Uuids = require('../src/uuid');
-var Events = require('../src/event');
-var Iterator = require('../src/iterator');
-var Shims = require('../src/shims');
+var Detect = require('./src/detect');
+var StackTrace = require('./src/stacktrace');
+var ArrayBufferOp = require('./src/arraybuffer');
+var CefInteractions = require('./src/cef_interactions');
+var Maths = require('./src/math');
+var Objects = require('./src/object');
+var Storage = require('./src/storage');
+var Tester = require('./src/testers');
+var UrlUtils = require('./src/urlutils');
+var Uuids = require('./src/uuid');
+var Events = require('./src/event');
+var Iterator = require('./src/iterator');
+var Shims = require('./src/shims');
 //TODO: resultset
 
 var C = {};
@@ -109,29 +109,7 @@ C.clearTimer = function(timer) {
 };
 
 module.exports = C;
-},{"../src/arraybuffer":11,"../src/cef_interactions":12,"../src/detect":13,"../src/event":15,"../src/iterator":16,"../src/math":17,"../src/object":19,"../src/raf":20,"../src/shims":21,"../src/stacktrace":22,"../src/storage":23,"../src/testers":24,"../src/urlutils":25,"../src/uuid":26,"lodash/core":5}],2:[function(require,module,exports){
-/*
- * Core Module Interface
- */
-var Core = require('./core');
-
-var _ = require('lodash');
-var Encodings = require('../src/encoding');
-
-_.extend(_, Core);
-_.extend(_, Encodings);
-
-//require('../advanced');
-//require('../algorithms');
-//require('../network');
-//require('../crypt');
-//require('../dom');
-//require('../m3d');
-
-Core.root.H = _;
-
-module.exports = _;
-},{"../src/encoding":14,"./core":1,"lodash":10}],3:[function(require,module,exports){
+},{"./src/arraybuffer":10,"./src/cef_interactions":11,"./src/detect":12,"./src/event":14,"./src/iterator":15,"./src/math":16,"./src/object":18,"./src/raf":19,"./src/shims":20,"./src/stacktrace":21,"./src/storage":22,"./src/testers":23,"./src/urlutils":24,"./src/uuid":25,"lodash/core":4}],2:[function(require,module,exports){
 /**
  * The base implementation of `_.property` without support for deep paths.
  *
@@ -147,7 +125,7 @@ function baseProperty(key) {
 
 module.exports = baseProperty;
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 var baseProperty = require('./_baseProperty');
 
 /**
@@ -165,7 +143,7 @@ var getLength = baseProperty('length');
 
 module.exports = getLength;
 
-},{"./_baseProperty":3}],5:[function(require,module,exports){
+},{"./_baseProperty":2}],4:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -4155,7 +4133,7 @@ module.exports = getLength;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var getLength = require('./_getLength'),
     isFunction = require('./isFunction'),
     isLength = require('./isLength');
@@ -4191,7 +4169,7 @@ function isArrayLike(value) {
 
 module.exports = isArrayLike;
 
-},{"./_getLength":4,"./isFunction":7,"./isLength":8}],7:[function(require,module,exports){
+},{"./_getLength":3,"./isFunction":6,"./isLength":7}],6:[function(require,module,exports){
 var isObject = require('./isObject');
 
 /** `Object#toString` result references. */
@@ -4235,7 +4213,7 @@ function isFunction(value) {
 
 module.exports = isFunction;
 
-},{"./isObject":9}],8:[function(require,module,exports){
+},{"./isObject":8}],7:[function(require,module,exports){
 /** Used as references for various `Number` constants. */
 var MAX_SAFE_INTEGER = 9007199254740991;
 
@@ -4273,7 +4251,7 @@ function isLength(value) {
 
 module.exports = isLength;
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
  * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
@@ -4305,7 +4283,7 @@ function isObject(value) {
 
 module.exports = isObject;
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -20177,7 +20155,7 @@ module.exports = isObject;
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var A = {};
 
 /**
@@ -20297,7 +20275,7 @@ A.readFloat32 = function(byteView, offset, littleEndian) {
 };
 
 module.exports = A;
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var C = require('./detect');
 
 /*
@@ -20332,7 +20310,7 @@ C.callCef = function(req, persistent, onsuccess, onfailure) {
 };
 
 module.exports = C;
-},{"./detect":13}],13:[function(require,module,exports){
+},{"./detect":12}],12:[function(require,module,exports){
 /*
  * Env Detection Module
  */
@@ -20485,7 +20463,7 @@ C.isWebGLSupported();
 C.language = C.isNodejs ? "" : (navigator.language || navigator['browserLanguage'] || "").toLowerCase();
 
 module.exports = C;
-},{"lodash/isArrayLike":6}],14:[function(require,module,exports){
+},{"lodash/isArrayLike":5}],13:[function(require,module,exports){
 /*
  * String Encoding
  * Binary Operation
@@ -21081,7 +21059,7 @@ ES.ba2ua = ES.ba2ia; //alias
 ES.s2us = ES.bs2us;
 
 module.exports = ES;
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /*
  * Custom Event Manipulation Module
  */
@@ -21211,15 +21189,27 @@ E.EventDispatcher = function() {
 };
 
 module.exports = E;
-},{"./iterator":16,"./uuid":26}],16:[function(require,module,exports){
+},{"./iterator":15,"./uuid":25}],15:[function(require,module,exports){
 /*
  * Iterator Logic Module
- *
- * TODO: to be doced
  */
-var C = require('../entries/core');
+var C = require('../core');
 
 var I = function(template) {
+    I.template = template || I.resultWrapper;
+    return I;
+};
+
+/**
+ * Set the default result template.
+ * A result template will be used to produce a result object according to the input value.
+ *
+ * @static
+ * @param {Function} template
+ * @returns {I}
+ * @constructor
+ */
+I.setTemplate = function(template) {
     I.template = template || I.resultWrapper;
     return I;
 };
@@ -21234,6 +21224,16 @@ I.resultWrapper = function(v) {
     return (v === undefined || v === null) ? {} : (C.isArrayLike(v) ? [] : {});
 };
 
+/**
+ * Iterates an object or an array with an iteratee and a stack of stack trace
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} obj
+ * @param {Function} fn
+ * @param {Array|String} [stackStack]
+ * @return {Array|Object} return mapped results of the input object
+ */
 I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(obj);
@@ -21243,7 +21243,8 @@ I.each = function(obj, fn, stackStack) {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
             } catch (e) {
-                e.printStackTrace('Nested error', stackStack);
+                //E.printStackTrace only accepts one parameter
+                e.printStackTrace(stackStack);
             }
         });
     } else {
@@ -21255,8 +21256,22 @@ I.each = function(obj, fn, stackStack) {
     return ret;
 };
 
+/**
+ * Just iterate the input object
+ * @type {function((Array|Object), Function=): (Array|Object)}
+ */
 I.every = C.each;
 
+/**
+ * Iterator function with early quit.
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} data data to iterate
+ * @param {Function} fn function to yield result of each input
+ * @param {Function} callable function to check if the itearting should be terminated
+ * @param {Array} [stackStack] stack trace stack
+ */
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(data);
@@ -21280,8 +21295,14 @@ I.until = function(data, fn, callable, stackStack) {
     return ret;
 };
 
-/*
+/**
+ * Iterate all keys on the object. (indices on arrays)
  * Would prefer H.each(H.keys())
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} data data to iterate
+ * @param {Function} callable iteratee to yield result
  */
 I.eachKey = function(data, callable) {
     var keys = data;
@@ -21295,6 +21316,18 @@ I.eachKey = function(data, callable) {
     }
 };
 
+/**
+ * Iterate on a range of numbers.
+ *
+ * @static
+ * @memberof H
+ * @return {Array|Object}
+ * @example
+ *
+ * H.eachIndex(4, function() {}) => 4x undefined
+ * H.eachIndex(1, 4, function() {}) => 3x undefined
+ * H.eachIndex(2, 4, 2, function() {}) => 1x undefined
+ */
 I.eachIndex = function() {
     var length = arguments.length;
     //accept 2-4 arguments only.
@@ -21309,7 +21342,7 @@ I.eachIndex = function() {
     //end, iteratee
     //start, end, iteratee
     //start, end, step, iteratee
-    var rs = I.resultWrapper();
+    var rs = I.resultWrapper([]);
     var i = 0;
 
     if (step === 1) {
@@ -21330,6 +21363,12 @@ I.eachIndex = function() {
     }
 };
 
+/**
+ * Iterator discarding values.
+ *
+ * @param {Array|Object} ele object to iterate
+ * @param {Function} fn iteratee to produce values
+ */
 I.filter = function(ele, fn) {
     if (fn === undefined) {
         fn = ele;
@@ -21343,7 +21382,7 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../entries/core":1}],17:[function(require,module,exports){
+},{"../core":1}],16:[function(require,module,exports){
 /*
  * Math-Related Module
  */
@@ -21630,7 +21669,7 @@ Ms.distOnEarth = function(p0, p1) {
 };
 
 module.exports = Ms;
-},{"./minicore":18,"./stacktrace":22}],18:[function(require,module,exports){
+},{"./minicore":17,"./stacktrace":21}],17:[function(require,module,exports){
 /*
  * MiniCore module
  *
@@ -21647,8 +21686,23 @@ var isArrayLike = function(collection) {
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
 };
 
+/**
+ * Check if something is array-like
+ *
+ * @param collection anything to check
+ * @return {boolean}
+ * @type {isArrayLike}
+ */
 Mini.isArrayLike = isArrayLike;
 
+/**
+ * Iterates on an array. Fast and should not be used on objects.
+ *
+ * @private
+ * @param {Array} array
+ * @param {Function} iteratee
+ * @returns {Array} result map
+ */
 Mini.arrayEach = function(array, iteratee) {
     var length = array.length;
 
@@ -21664,21 +21718,37 @@ Mini.arrayEach = function(array, iteratee) {
 };
 
 module.exports = Mini;
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /*
  * Object-Related Module
- *
- * TODO: to be doced
  */
 
 var O = {};
 require('./stacktrace');
 
 //variable type to be checked
+/**
+ * Checks if the target string contains a charsequence.
+ *
+ * @static
+ * @memberof H
+ * @param {String} str target string
+ * @param {String} sub substring to check
+ * @returns {boolean}
+ */
 O.strContains = function(str, sub) {
     return str.indexOf(sub) !== -1;
 };
 
+/**
+ * Checks if the target string contains a charsequence ignoring the char case.
+ *
+ * @static
+ * @memberof H
+ * @param {String} str target string
+ * @param {String} sub substring to check
+ * @returns {boolean}
+ */
 O.strContainsIgnoreCase = function(str, sub) {
     return str.toLowerCase().indexOf(sub.toLowerCase()) !== -1;
 };
@@ -21696,13 +21766,22 @@ O.parseJson = function(json) {
     return undefined;
 };
 
+/**
+ * Clones the object via JSON.
+ * Should be used on small plain javascript objects only.
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} obj
+ * @return {Object} cloned object
+ */
 O.cloneByParse = function(obj) {
     //for small objects only
     return JSON.parse(JSON.stringify(obj));
 };
 
 module.exports = O;
-},{"./stacktrace":22}],20:[function(require,module,exports){
+},{"./stacktrace":21}],19:[function(require,module,exports){
 var root = require('./detect').root;
 
 root.requestAnimationFrame = (function() {
@@ -21715,7 +21794,7 @@ root.requestAnimationFrame = (function() {
             return root.setTimeout(callback, 1000 / 60);
         };
 })();
-},{"./detect":13}],21:[function(require,module,exports){
+},{"./detect":12}],20:[function(require,module,exports){
 var S = {};
 
 var D = require('./detect');
@@ -21841,7 +21920,7 @@ S.addProperty = addProperty;
 S.createObject = createObject;
 
 module.exports = S;
-},{"./detect":13}],22:[function(require,module,exports){
+},{"./detect":12}],21:[function(require,module,exports){
 var C = {};
 
 var Mini = require('./minicore');
@@ -21940,7 +22019,7 @@ Error.prototype.getStackTrace = C.getStackTrace;
 Error.prototype.printStackTrace = printStackTrace;
 
 module.exports = C;
-},{"./minicore":18}],23:[function(require,module,exports){
+},{"./minicore":17}],22:[function(require,module,exports){
 var C = {};
 var H = require('./stacktrace');
 var Detect = require('./detect');
@@ -22051,7 +22130,7 @@ function removeItemFallback(key) {
 }
 
 module.exports = C;
-},{"./detect":13,"./stacktrace":22}],24:[function(require,module,exports){
+},{"./detect":12,"./stacktrace":21}],23:[function(require,module,exports){
 var C = {};
 
 C.now = Date.now;
@@ -22137,7 +22216,7 @@ C.profileTimes = function(cb, times, title) {
 };
 
 module.exports = C;
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var C = {};
 
 var I = require('./iterator');
@@ -22229,7 +22308,7 @@ C.param = function(data) {
 };
 
 module.exports = C;
-},{"./detect":13,"./iterator":16}],26:[function(require,module,exports){
+},{"./detect":12,"./iterator":15}],25:[function(require,module,exports){
 var C = {};
 
 /**
@@ -22293,4 +22372,26 @@ C.fastUuid = function() {
 };
 
 module.exports = C;
-},{}]},{},[2]);
+},{}],26:[function(require,module,exports){
+/*
+ * Core Module Interface
+ */
+var Core = require('./core');
+
+var _ = require('lodash');
+var Encodings = require('./src/encoding');
+
+_.extend(_, Core);
+_.extend(_, Encodings);
+
+//require('../advanced');
+//require('../algorithms');
+//require('../network');
+//require('../crypt');
+//require('../dom');
+//require('../m3d');
+
+Core.root.H = _;
+
+module.exports = _;
+},{"./core":1,"./src/encoding":13,"lodash":9}]},{},[26]);

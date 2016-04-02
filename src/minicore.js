@@ -14,8 +14,23 @@ var isArrayLike = function(collection) {
     return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
 };
 
+/**
+ * Check if something is array-like
+ *
+ * @param collection anything to check
+ * @return {boolean}
+ * @type {isArrayLike}
+ */
 Mini.isArrayLike = isArrayLike;
 
+/**
+ * Iterates on an array. Fast and should not be used on objects.
+ *
+ * @private
+ * @param {Array} array
+ * @param {Function} iteratee
+ * @returns {Array} result map
+ */
 Mini.arrayEach = function(array, iteratee) {
     var length = array.length;
 

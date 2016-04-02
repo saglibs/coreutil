@@ -4,7 +4,7 @@
 var Core = require('./core');
 
 var _ = require('lodash');
-var Encodings = require('../src/encoding');
+var Encodings = require('./src/encoding');
 
 _.extend(_, Core);
 _.extend(_, Encodings);

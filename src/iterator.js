@@ -1,11 +1,23 @@
 /*
  * Iterator Logic Module
- *
- * TODO: to be doced
  */
-var C = require('../entries/core');
+var C = require('../core');
 
 var I = function(template) {
+    I.template = template || I.resultWrapper;
+    return I;
+};
+
+/**
+ * Set the default result template.
+ * A result template will be used to produce a result object according to the input value.
+ *
+ * @static
+ * @param {Function} template
+ * @returns {I}
+ * @constructor
+ */
+I.setTemplate = function(template) {
     I.template = template || I.resultWrapper;
     return I;
 };
@@ -20,6 +32,16 @@ I.resultWrapper = function(v) {
     return (v === undefined || v === null) ? {} : (C.isArrayLike(v) ? [] : {});
 };
 
+/**
+ * Iterates an object or an array with an iteratee and a stack of stack trace
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} obj
+ * @param {Function} fn
+ * @param {Array|String} [stackStack]
+ * @return {Array|Object} return mapped results of the input object
+ */
 I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(obj);
@@ -29,7 +51,8 @@ I.each = function(obj, fn, stackStack) {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
             } catch (e) {
-                e.printStackTrace('Nested error', stackStack);
+                //E.printStackTrace only accepts one parameter
+                e.printStackTrace(stackStack);
             }
         });
     } else {
@@ -41,8 +64,22 @@ I.each = function(obj, fn, stackStack) {
     return ret;
 };
 
+/**
+ * Just iterate the input object
+ * @type {function((Array|Object), Function=): (Array|Object)}
+ */
 I.every = C.each;
 
+/**
+ * Iterator function with early quit.
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} data data to iterate
+ * @param {Function} fn function to yield result of each input
+ * @param {Function} callable function to check if the itearting should be terminated
+ * @param {Array} [stackStack] stack trace stack
+ */
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(data);
@@ -66,8 +103,14 @@ I.until = function(data, fn, callable, stackStack) {
     return ret;
 };
 
-/*
+/**
+ * Iterate all keys on the object. (indices on arrays)
  * Would prefer H.each(H.keys())
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} data data to iterate
+ * @param {Function} callable iteratee to yield result
  */
 I.eachKey = function(data, callable) {
     var keys = data;
@@ -81,6 +124,18 @@ I.eachKey = function(data, callable) {
     }
 };
 
+/**
+ * Iterate on a range of numbers.
+ *
+ * @static
+ * @memberof H
+ * @return {Array|Object}
+ * @example
+ *
+ * H.eachIndex(4, function() {}) => 4x undefined
+ * H.eachIndex(1, 4, function() {}) => 3x undefined
+ * H.eachIndex(2, 4, 2, function() {}) => 1x undefined
+ */
 I.eachIndex = function() {
     var length = arguments.length;
     //accept 2-4 arguments only.
@@ -95,7 +150,7 @@ I.eachIndex = function() {
     //end, iteratee
     //start, end, iteratee
     //start, end, step, iteratee
-    var rs = I.resultWrapper();
+    var rs = I.resultWrapper([]);
     var i = 0;
 
     if (step === 1) {
@@ -116,6 +171,12 @@ I.eachIndex = function() {
     }
 };
 
+/**
+ * Iterator discarding values.
+ *
+ * @param {Array|Object} ele object to iterate
+ * @param {Function} fn iteratee to produce values
+ */
 I.filter = function(ele, fn) {
     if (fn === undefined) {
         fn = ele;
