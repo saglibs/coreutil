@@ -1,13 +1,13 @@
 var S = {};
 
-var D = require('./detect');
-var root = D.root;
+var H = require('./detect');
+var root = H.root;
 
 var noop = function() {
     return function() {};
 };
 
-var navigator = D.root.navigator || {userAgent: ""};
+var navigator = H.root.navigator || {userAgent: ""};
 
 /**
  * Add property to object
@@ -20,7 +20,7 @@ var navigator = D.root.navigator || {userAgent: ""};
  */
 var addProperty = noop();
 //defineProperty in IE8 only accepts DOM elements as parameters, while in Safari 5 it's opposite
-if (!Object.defineProperty || (0 < D.getIE() <= 8 && navigator.userAgent.indexOf('MSIE') !== -1)) {
+if (!Object.defineProperty || (0 < H.getIE() <= 8 && navigator.userAgent.indexOf('MSIE') !== -1)) {
     addProperty = function(instance, k, descriptor) {
         instance[k] = descriptor.value;
 

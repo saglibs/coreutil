@@ -44,4 +44,13 @@ Mini.arrayEach = function(array, iteratee) {
     }
 };
 
+Mini.hiddenProperty = function(v) {
+    return {
+        value: v,
+        configurable: false,
+        enumerable: false,
+        writable: true
+    };
+};
+
 module.exports = Mini;

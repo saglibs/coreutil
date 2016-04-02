@@ -1,7 +1,7 @@
 /*
  * Iterator Logic Module
  */
-var C = require('../core');
+var C = require('./core');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;
@@ -29,6 +29,7 @@ I.setTemplate = function(template) {
  */
 I.resultWrapper = function(v) {
     if (I.template !== undefined) return I.template(v);
+    console.log(C)
     return (v === undefined || v === null) ? {} : (C.isArrayLike(v) ? [] : {});
 };
 
@@ -115,7 +116,7 @@ I.until = function(data, fn, callable, stackStack) {
 I.eachKey = function(data, callable) {
     var keys = data;
     if (!C.isArrayLike(data)) {
-        keys = C.keys(data);
+        keys = _.keys(data);
     }
     var l = keys.length;
     var n = keys.length;
@@ -174,7 +175,7 @@ I.eachIndex = function() {
 /**
  * Iterator discarding values.
  *
- * @param {Array|Object} ele object to iterate
+ * @param {Array|Object|Function} ele object to iterate
  * @param {Function} fn iteratee to produce values
  */
 I.filter = function(ele, fn) {

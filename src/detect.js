@@ -7,6 +7,30 @@ var C = {};
 C.isArrayLike = require('lodash/isArrayLike');
 
 /**
+ * Check if a value can be parsed to an integer
+ *
+ * @static
+ * @memberof H
+ * @param {*} i value to be checked
+ * @returns {boolean}
+ */
+C.isInteger = function(i) {
+    return  /^-?\d+$/.test(i + "") || /^(-?\d+)e(\d+)$/.test(i + "");
+};
+
+/**
+ * Checks if a value can be parsed into a float.
+ *
+ * @static
+ * @memberof H
+ * @param {*} v value to be checked
+ * @returns {boolean}
+ */
+C.isFloat = function(v) {
+    return /^(-?\d+)(\.\d+)?$/.test(v + "") || /^(-?\d+)(\.\d+)?e(-?\d+)$/.test(v + "");
+};
+
+/**
  * Flag of is in node.js environment or not.
  *
  * @static
