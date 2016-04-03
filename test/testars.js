@@ -9,5 +9,6 @@ H.addProperty(obj, '__Module__', {
 
 QUnit.test("toArray Test", function(assert) {
     var arr = obj.toArray();
-    assert.ok(arr !== undefined && arr[0] === 1 && arr.length === 1, "Passed!");
+    assert.ok(arr !== undefined && arr[0] === 1 && arr.length === 1,
+        "{a:1}.toArray() === [1] Passed!");
 });

@@ -21337,7 +21337,8 @@ module.exports = E;
 /*
  * Iterator Logic Module
  */
-var C = require('./core');
+var C = require('lodash/core');
+var Mini = require('../mini');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;
@@ -21365,8 +21366,7 @@ I.setTemplate = function(template) {
  */
 I.resultWrapper = function(v) {
     if (I.template !== undefined) return I.template(v);
-    console.log(C)
-    return (v === undefined || v === null) ? {} : (C.isArrayLike(v) ? [] : {});
+    return (v === undefined || v === null) ? {} : (Mini.isArrayLike(v) ? [] : {});
 };
 
 /**
@@ -21382,7 +21382,7 @@ I.resultWrapper = function(v) {
 I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(obj);
-    if (C.debug) {
+    if (H.debug) {
         C.each(obj, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
@@ -21420,7 +21420,8 @@ I.every = C.each;
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(data);
-    if (C.debug) {
+    //TODO: does it work? (not including `core` module here due to dependency error)
+    if (H.debug) {
         C.find(data, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
@@ -21451,8 +21452,8 @@ I.until = function(data, fn, callable, stackStack) {
  */
 I.eachKey = function(data, callable) {
     var keys = data;
-    if (!C.isArrayLike(data)) {
-        keys = _.keys(data);
+    if (!Mini.isArrayLike(data)) {
+        keys = C.keys(data);
     }
     var l = keys.length;
     var n = keys.length;
@@ -21527,7 +21528,7 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"./core":14}],19:[function(require,module,exports){
+},{"../mini":2,"lodash/core":5}],19:[function(require,module,exports){
 /*
  * Math-Related Module
  */
