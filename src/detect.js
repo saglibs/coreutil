@@ -30,6 +30,12 @@ C.isFloat = function(v) {
     return /^(-?\d+)(\.\d+)?$/.test(v + "") || /^(-?\d+)(\.\d+)?e(-?\d+)$/.test(v + "");
 };
 
+var processObj = undefined;
+
+try {
+    processObj = eval('process');
+} catch (e) {}
+
 /**
  * Flag of is in node.js environment or not.
  *
@@ -37,7 +43,7 @@ C.isFloat = function(v) {
  * @memberof H
  * @type {boolean}
  */
-C.isNodejs = 'object' === typeof eval('process') && Object.prototype.toString.call(eval('process')) === '[object process]';
+C.isNodejs = 'object' === typeof processObj && Object.prototype.toString.call(processObj) === '[object process]';
 
 C.root = {};
 

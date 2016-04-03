@@ -15,7 +15,8 @@ var Uuids = require('./uuid');
 var Events = require('./event');
 // var Iterator = require('./iterator');
 var Shims = require('./shims');
-//TODO: resultset
+var ARS = require('./abstractresultset');
+var RS = require('./resultset');
 
 var C = {};
 
@@ -33,6 +34,9 @@ _.extend(C, Uuids);
 _.extend(C, Events);
 // _.extend(C, Iterator);
 _.extend(C, Shims);
+_.extend(C, RS);
+
+C.abstraceResultSet = ARS;
 
 C.noop = function() {
     return function() {};

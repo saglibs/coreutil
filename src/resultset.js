@@ -2,6 +2,7 @@
  * ResultSet Module
  */
 var RS = {};
+var Mini = require('../mini');
 var H = require('lodash/core');
 var ARS = require('./abstractresultset');
 
@@ -108,7 +109,25 @@ registerComponent("Length",  Length);
 registerComponent("values",  values);
 registerComponent("keys",    keys);
 
+//assuming prototype exists
+function transform(obj) {
+    if (obj.prototype && obj.prototype.__Module__ && obj.prototype.__Module__ !== RsIdentifier) {
+        obj.prototype.__Module__ = RsIdentifier;
+    }
+    if (obj.__proto__ && obj.__proto__.__Module__ && obj.__proto__.__Module__ !== RsIdentifier) {
+        obj.__proto__.__Module__ = RsIdentifier;
+    }
+}
+
+function transformArray(obj) {
+    if (Mini.isArrayLike(obj)) {
+        Mini.arrayEach(obj, transformArray);
+    }
+    transform(obj);
+}
+
 function wrap(v) {
+    transformArray(v);
     return v;
 }
 

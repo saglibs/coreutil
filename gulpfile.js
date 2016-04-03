@@ -29,7 +29,7 @@ gulp.task('default', function () {
             gutil.log('bundling ' + file.path);
             // replace file contents with browserify's bundle stream
             //noinspection JSUnresolvedFunction
-            file.contents = browserify(file.path, {debug: true}).bundle();
+            file.contents = browserify(file.path, {debug: false}).bundle();
         }))
         // transform streaming contents into buffer contents (because gulp-sourcemaps does not support streaming contents)
         .pipe(buffer())

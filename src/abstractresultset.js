@@ -11,14 +11,22 @@ ARS.modules = {};
 ARS.checkTargets = {};
 ARS.checkers = {};
 
+var MODULE = '__Module__';
+
 ARS.registerChannel = function(identifier, targets, valuePrechecker) {
     ARS.modules[identifier] = {};
     ARS.checkTargets[identifier] = targets;
     ARS.checkers[identifier] = valuePrechecker;
+
+    Mini.arrayEach(targets || [], function(target) {
+        if (!target[MODULE]) {
+            H.addProperty(target, MODULE, Mini.hiddenProperty(MODULE));
+        }
+    });
 };
 
 function preCheck(object) {
-    return (ARS.checkers[object['__Module__'] || ""] || function() {})(object);
+    return (ARS.checkers[object[MODULE] || ""] || function() {})(object);
 }
 
 ARS.registerChannelFunction = function(channel, name, funcGen) {

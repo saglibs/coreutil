@@ -1,115 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var _ = require('lodash/core');
+var Core = require('./src/core');
 
-require('./src/raf');
+Core.extend(Core, require('./src/iterator'));
 
-var Detect = require('./src/detect');
-var StackTrace = require('./src/stacktrace');
-var ArrayBufferOp = require('./src/arraybuffer');
-var CefInteractions = require('./src/cef_interactions');
-var Maths = require('./src/math');
-var Objects = require('./src/object');
-var Storage = require('./src/storage');
-var Tester = require('./src/testers');
-var UrlUtils = require('./src/urlutils');
-var Uuids = require('./src/uuid');
-var Events = require('./src/event');
-var Iterator = require('./src/iterator');
-var Shims = require('./src/shims');
-//TODO: resultset
+Core.root.H = Core;
 
-var C = {};
-
-_.extend(C, _);
-_.extend(C, Detect);
-_.extend(C, StackTrace);
-_.extend(C, ArrayBufferOp);
-_.extend(C, CefInteractions);
-_.extend(C, Maths);
-_.extend(C, Objects);
-_.extend(C, Storage);
-_.extend(C, Tester);
-_.extend(C, UrlUtils);
-_.extend(C, Uuids);
-_.extend(C, Events);
-_.extend(C, Iterator);
-_.extend(C, Shims);
-
-C.noop = function() {
-    return function() {};
-};
-
-C.now = Date.now;
-
-/*
- * jQuery Shim
- */
-//noinspection JSUnresolvedVariable
-if (C.root.jQuery) {
-    //noinspection JSUnresolvedVariable,JSUnusedGlobalSymbols
-    C.root.jQuery.fn.extend({
-        slideLeftHide: function( speed, callback ) {
-            //noinspection JSUnresolvedFunction
-            this.animate( {
-                width: "hide",
-                paddingLeft: "hide",
-                paddingRight: "hide",
-                marginLeft: "hide",
-                marginRight: "hide"
-            }, speed, callback);
-        },
-        slideLeftShow: function( speed, callback ) {
-            //noinspection JSUnresolvedFunction
-            this.animate( {
-                width: "show",
-                paddingLeft: "show",
-                paddingRight: "show",
-                marginLeft: "show",
-                marginRight: "show"
-            }, speed, callback);
-        }
-    });
-}
-
-//noinspection JSUnusedGlobalSymbols
-C.extend(String.prototype, {
-    replaceAll: function(s1,s2){
-        return this.replace(new RegExp(s1,"gm"),s2);
-    }
-});
-
-/**
- * Produce a random string in a fixed size. Output size is 16 by default.
- *
- * @static
- * @memberof H
- * @param {Number} [size] length of target string
- * @returns {string}
- */
-C.nonceStr = function(size) {
-    var s = "";
-    var c = "0123456789qwertyuiopasdfghjklzxcvbnm";
-    for (var i = 0; i < size || 16; i++) {
-        s += c[parseInt(36 * Math.random())];
-    }
-    return s;
-};
-
-/**
- * Clear timer
- *
- * @static
- * @memberof H
- * @param timer timer to clear
- */
-C.clearTimer = function(timer) {
-    if (timer) {
-        clearInterval(timer);
-    }
-};
-
-module.exports = C;
-},{"./src/arraybuffer":11,"./src/cef_interactions":12,"./src/detect":13,"./src/event":15,"./src/iterator":16,"./src/math":17,"./src/object":18,"./src/raf":19,"./src/shims":20,"./src/stacktrace":21,"./src/storage":22,"./src/testers":23,"./src/urlutils":24,"./src/uuid":25,"lodash/core":5}],2:[function(require,module,exports){
+module.exports = Core;
+},{"./src/core":14,"./src/iterator":18}],2:[function(require,module,exports){
 /*
  * MiniCore module
  *
@@ -154,6 +51,15 @@ Mini.arrayEach = function(array, iteratee) {
         }
         return result;
     }
+};
+
+Mini.hiddenProperty = function(v) {
+    return {
+        value: v,
+        configurable: false,
+        enumerable: false,
+        writable: true
+    };
 };
 
 module.exports = Mini;
@@ -20204,6 +20110,51 @@ module.exports = isObject;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],11:[function(require,module,exports){
+/*
+ * ResultSet: Array or Element, they share the same filter/checker
+ */
+
+var ARS = {};
+
+var Mini = require('../mini');
+var H = require('./shims');
+
+ARS.modules = {};
+ARS.checkTargets = {};
+ARS.checkers = {};
+
+var MODULE = '__Module__';
+
+ARS.registerChannel = function(identifier, targets, valuePrechecker) {
+    ARS.modules[identifier] = {};
+    ARS.checkTargets[identifier] = targets;
+    ARS.checkers[identifier] = valuePrechecker;
+
+    Mini.arrayEach(targets || [], function(target) {
+        if (!target[MODULE]) {
+            H.addProperty(target, MODULE, Mini.hiddenProperty(MODULE));
+        }
+    });
+};
+
+function preCheck(object) {
+    return (ARS.checkers[object[MODULE] || ""] || function() {})(object);
+}
+
+ARS.registerChannelFunction = function(channel, name, funcGen) {
+    Mini.arrayEach(ARS.checkTargets[channel] || [], function(target) {
+        if (target[name]) {
+            //exist, do nothing. cuz preChecker is relative to current module
+        } else {
+            //not exist, add func to target
+            // target[name] = funcGen(ARS.checkers[channel]);
+            H.addProperty(target, name, Mini.hiddenProperty(funcGen(preCheck)));
+        }
+    });
+};
+
+module.exports = ARS;
+},{"../mini":2,"./shims":23}],12:[function(require,module,exports){
 var A = {};
 
 /**
@@ -20323,7 +20274,7 @@ A.readFloat32 = function(byteView, offset, littleEndian) {
 };
 
 module.exports = A;
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var C = require('./detect');
 
 /*
@@ -20358,7 +20309,122 @@ C.callCef = function(req, persistent, onsuccess, onfailure) {
 };
 
 module.exports = C;
-},{"./detect":13}],13:[function(require,module,exports){
+},{"./detect":15}],14:[function(require,module,exports){
+var _ = require('lodash/core');
+
+require('./raf');
+
+var Detect = require('./detect');
+var StackTrace = require('./stacktrace');
+var ArrayBufferOp = require('./arraybuffer');
+var CefInteractions = require('./cef_interactions');
+var Maths = require('./math');
+var Objects = require('./object');
+var Storage = require('./storage');
+var Tester = require('./testers');
+var UrlUtils = require('./urlutils');
+var Uuids = require('./uuid');
+var Events = require('./event');
+// var Iterator = require('./iterator');
+var Shims = require('./shims');
+var ARS = require('./abstractresultset');
+var RS = require('./resultset');
+
+var C = {};
+
+_.extend(C, _);
+_.extend(C, Detect);
+_.extend(C, StackTrace);
+_.extend(C, ArrayBufferOp);
+_.extend(C, CefInteractions);
+_.extend(C, Maths);
+_.extend(C, Objects);
+_.extend(C, Storage);
+_.extend(C, Tester);
+_.extend(C, UrlUtils);
+_.extend(C, Uuids);
+_.extend(C, Events);
+// _.extend(C, Iterator);
+_.extend(C, Shims);
+_.extend(C, RS);
+
+C.abstraceResultSet = ARS;
+
+C.noop = function() {
+    return function() {};
+};
+
+C.now = Date.now;
+
+/*
+ * jQuery Shim
+ */
+//noinspection JSUnresolvedVariable
+if (C.root.jQuery) {
+    //noinspection JSUnresolvedVariable,JSUnusedGlobalSymbols
+    C.root.jQuery.fn.extend({
+        slideLeftHide: function( speed, callback ) {
+            //noinspection JSUnresolvedFunction
+            this.animate( {
+                width: "hide",
+                paddingLeft: "hide",
+                paddingRight: "hide",
+                marginLeft: "hide",
+                marginRight: "hide"
+            }, speed, callback);
+        },
+        slideLeftShow: function( speed, callback ) {
+            //noinspection JSUnresolvedFunction
+            this.animate( {
+                width: "show",
+                paddingLeft: "show",
+                paddingRight: "show",
+                marginLeft: "show",
+                marginRight: "show"
+            }, speed, callback);
+        }
+    });
+}
+
+//noinspection JSUnusedGlobalSymbols
+C.extend(String.prototype, {
+    replaceAll: function(s1,s2){
+        return this.replace(new RegExp(s1,"gm"),s2);
+    }
+});
+
+/**
+ * Produce a random string in a fixed size. Output size is 16 by default.
+ *
+ * @static
+ * @memberof H
+ * @param {Number} [size] length of target string
+ * @returns {string}
+ */
+C.nonceStr = function(size) {
+    var s = "";
+    var c = "0123456789qwertyuiopasdfghjklzxcvbnm";
+    for (var i = 0; i < size || 16; i++) {
+        s += c[parseInt(36 * Math.random())];
+    }
+    return s;
+};
+
+/**
+ * Clear timer
+ *
+ * @static
+ * @memberof H
+ * @param timer timer to clear
+ */
+C.clearTimer = function(timer) {
+    if (timer) {
+        clearInterval(timer);
+    }
+};
+
+module.exports = C;
+},{"./abstractresultset":11,"./arraybuffer":12,"./cef_interactions":13,"./detect":15,"./event":17,"./math":19,"./object":20,"./raf":21,"./resultset":22,"./shims":23,"./stacktrace":24,"./storage":25,"./testers":26,"./urlutils":27,"./uuid":28,"lodash/core":5}],15:[function(require,module,exports){
 /*
  * Env Detection Module
  */
@@ -20368,13 +20434,43 @@ var C = {};
 C.isArrayLike = require('lodash/isArrayLike');
 
 /**
+ * Check if a value can be parsed to an integer
+ *
+ * @static
+ * @memberof H
+ * @param {*} i value to be checked
+ * @returns {boolean}
+ */
+C.isInteger = function(i) {
+    return  /^-?\d+$/.test(i + "") || /^(-?\d+)e(\d+)$/.test(i + "");
+};
+
+/**
+ * Checks if a value can be parsed into a float.
+ *
+ * @static
+ * @memberof H
+ * @param {*} v value to be checked
+ * @returns {boolean}
+ */
+C.isFloat = function(v) {
+    return /^(-?\d+)(\.\d+)?$/.test(v + "") || /^(-?\d+)(\.\d+)?e(-?\d+)$/.test(v + "");
+};
+
+var processObj = undefined;
+
+try {
+    processObj = eval('process');
+} catch (e) {}
+
+/**
  * Flag of is in node.js environment or not.
  *
  * @static
  * @memberof H
  * @type {boolean}
  */
-C.isNodejs = 'object' === typeof eval('process') && Object.prototype.toString.call(eval('process')) === '[object process]';
+C.isNodejs = 'object' === typeof processObj && Object.prototype.toString.call(processObj) === '[object process]';
 
 C.root = {};
 
@@ -20511,7 +20607,7 @@ C.isWebGLSupported();
 C.language = C.isNodejs ? "" : (navigator.language || navigator['browserLanguage'] || "").toLowerCase();
 
 module.exports = C;
-},{"lodash/isArrayLike":6}],14:[function(require,module,exports){
+},{"lodash/isArrayLike":6}],16:[function(require,module,exports){
 /*
  * String Encoding
  * Binary Operation
@@ -21107,7 +21203,7 @@ ES.ba2ua = ES.ba2ia; //alias
 ES.s2us = ES.bs2us;
 
 module.exports = ES;
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /*
  * Custom Event Manipulation Module
  */
@@ -21237,11 +21333,11 @@ E.EventDispatcher = function() {
 };
 
 module.exports = E;
-},{"./iterator":16,"./uuid":25}],16:[function(require,module,exports){
+},{"./iterator":18,"./uuid":28}],18:[function(require,module,exports){
 /*
  * Iterator Logic Module
  */
-var C = require('../core');
+var C = require('./core');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;
@@ -21269,6 +21365,7 @@ I.setTemplate = function(template) {
  */
 I.resultWrapper = function(v) {
     if (I.template !== undefined) return I.template(v);
+    console.log(C)
     return (v === undefined || v === null) ? {} : (C.isArrayLike(v) ? [] : {});
 };
 
@@ -21355,7 +21452,7 @@ I.until = function(data, fn, callable, stackStack) {
 I.eachKey = function(data, callable) {
     var keys = data;
     if (!C.isArrayLike(data)) {
-        keys = C.keys(data);
+        keys = _.keys(data);
     }
     var l = keys.length;
     var n = keys.length;
@@ -21414,7 +21511,7 @@ I.eachIndex = function() {
 /**
  * Iterator discarding values.
  *
- * @param {Array|Object} ele object to iterate
+ * @param {Array|Object|Function} ele object to iterate
  * @param {Function} fn iteratee to produce values
  */
 I.filter = function(ele, fn) {
@@ -21430,7 +21527,7 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../core":1}],17:[function(require,module,exports){
+},{"./core":14}],19:[function(require,module,exports){
 /*
  * Math-Related Module
  */
@@ -21717,7 +21814,7 @@ Ms.distOnEarth = function(p0, p1) {
 };
 
 module.exports = Ms;
-},{"../mini":2,"./stacktrace":21}],18:[function(require,module,exports){
+},{"../mini":2,"./stacktrace":24}],20:[function(require,module,exports){
 /*
  * Object-Related Module
  */
@@ -21780,7 +21877,7 @@ O.cloneByParse = function(obj) {
 };
 
 module.exports = O;
-},{"./stacktrace":21}],19:[function(require,module,exports){
+},{"./stacktrace":24}],21:[function(require,module,exports){
 var root = require('./detect').root;
 
 root.requestAnimationFrame = (function() {
@@ -21793,17 +21890,159 @@ root.requestAnimationFrame = (function() {
             return root.setTimeout(callback, 1000 / 60);
         };
 })();
-},{"./detect":13}],20:[function(require,module,exports){
+},{"./detect":15}],22:[function(require,module,exports){
+/*
+ * ResultSet Module
+ */
+var RS = {};
+var Mini = require('../mini');
+var H = require('lodash/core');
+var ARS = require('./abstractresultset');
+
+var RsIdentifier = '__isRS__';
+
+function checker(val) {
+    if (val instanceof Array || val instanceof Object) {
+        return true;
+    }
+}
+
+//default channel doesn't need filter
+ARS.registerChannel(RsIdentifier, [Array.prototype, Object.prototype], checker);
+
+ARS.registerChannelFunction('__isRS__', 'toArray', function(preChecker) {
+    return function() {
+        if (preChecker(this)) return H.values(this);
+    };
+});
+
+function registerComponent(name, func) {
+    ARS.registerChannelFunction(RsIdentifier, name, function(preCheck) {
+        //r-w risky?
+        checker = preCheck;
+        return func;
+    });
+}
+
+function wrapFunction(fn) {
+    return function() {
+        if (checker(arguments[0])) {
+            fn.apply(this, arguments);
+        }
+    }
+}
+
+/*
+ * ResultSet Operations
+ */
+function each() {
+    //patch `fn`
+    arguments[1] = wrapFunction(arguments[1]);
+    return H.each.apply(H, [this].concat(Array.prototype.slice.call(arguments)));
+}
+
+function filter(fn) {
+    fn = wrapFunction(fn);
+    return H.each(this, function(o) {
+        if (fn(o)) {
+            return o;
+        }
+    });
+}
+
+function sortBy(fn) {
+    fn = wrapFunction(fn);
+    return H.sortBy(this, fn);
+}
+
+function toArray() {
+    return H.values(this);
+}
+
+function groupBy(fn) {
+    fn = wrapFunction(fn);
+    return H.groupBy(this, fn);
+}
+
+function join(separator) {
+    return H.values(this).join(separator || "");
+}
+
+function sum() {
+    var s = 0;
+    H.each(this || [], function(v) {
+        var nv = H.isInteger(v) ? parseInt(v) : (H.isFloat(v) ? parseFloat(v) : NaN);
+        if (!isNaN(nv)) {
+            s += nv;
+        }
+    });
+    return s;
+}
+
+function Length() {
+    return H.values(this).length;
+}
+
+function values() {
+    return H.values(this);
+}
+
+function keys() {
+    return H.keys(this);
+}
+
+registerComponent("each",    each);
+registerComponent("filter",  filter);
+registerComponent("sortBy",  sortBy);
+registerComponent("toArray", toArray);
+registerComponent("groupBy", groupBy);
+registerComponent("join",    join);
+registerComponent("sum",     sum);
+registerComponent("Length",  Length);
+registerComponent("values",  values);
+registerComponent("keys",    keys);
+
+//assuming prototype exists
+function transform(obj) {
+    if (obj.prototype && obj.prototype.__Module__ && obj.prototype.__Module__ !== RsIdentifier) {
+        obj.prototype.__Module__ = RsIdentifier;
+    }
+    if (obj.__proto__ && obj.__proto__.__Module__ && obj.__proto__.__Module__ !== RsIdentifier) {
+        obj.__proto__.__Module__ = RsIdentifier;
+    }
+}
+
+function transformArray(obj) {
+    if (Mini.isArrayLike(obj)) {
+        Mini.arrayEach(obj, transformArray);
+    }
+    transform(obj);
+}
+
+function wrap(v) {
+    transformArray(v);
+    return v;
+}
+
+RS.wrap = wrap;
+/**
+ * @deprecated
+ * @type {wrap}
+ */
+RS.fastWrap = wrap;
+
+module.exports = RS;
+},{"../mini":2,"./abstractresultset":11,"lodash/core":5}],23:[function(require,module,exports){
 var S = {};
 
-var D = require('./detect');
-var root = D.root;
+var H = require('./detect');
+var root = H.root;
 
 var noop = function() {
     return function() {};
 };
 
-var navigator = D.root.navigator || {userAgent: ""};
+var navigator = H.root.navigator || {userAgent: ""};
 
 /**
  * Add property to object
@@ -21816,7 +22055,7 @@ var navigator = D.root.navigator || {userAgent: ""};
  */
 var addProperty = noop();
 //defineProperty in IE8 only accepts DOM elements as parameters, while in Safari 5 it's opposite
-if (!Object.defineProperty || (0 < D.getIE() <= 8 && navigator.userAgent.indexOf('MSIE') !== -1)) {
+if (!Object.defineProperty || (0 < H.getIE() <= 8 && navigator.userAgent.indexOf('MSIE') !== -1)) {
     addProperty = function(instance, k, descriptor) {
         instance[k] = descriptor.value;
 
@@ -21919,7 +22158,7 @@ S.addProperty = addProperty;
 S.createObject = createObject;
 
 module.exports = S;
-},{"./detect":13}],21:[function(require,module,exports){
+},{"./detect":15}],24:[function(require,module,exports){
 var C = {};
 
 var Mini = require('../mini');
@@ -22018,7 +22257,7 @@ Error.prototype.getStackTrace = C.getStackTrace;
 Error.prototype.printStackTrace = printStackTrace;
 
 module.exports = C;
-},{"../mini":2}],22:[function(require,module,exports){
+},{"../mini":2}],25:[function(require,module,exports){
 var C = {};
 var H = require('./stacktrace');
 var Detect = require('./detect');
@@ -22129,7 +22368,7 @@ function removeItemFallback(key) {
 }
 
 module.exports = C;
-},{"./detect":13,"./stacktrace":21}],23:[function(require,module,exports){
+},{"./detect":15,"./stacktrace":24}],26:[function(require,module,exports){
 var C = {};
 
 C.now = Date.now;
@@ -22215,7 +22454,7 @@ C.profileTimes = function(cb, times, title) {
 };
 
 module.exports = C;
-},{}],24:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var C = {};
 
 var I = require('./iterator');
@@ -22307,7 +22546,7 @@ C.param = function(data) {
 };
 
 module.exports = C;
-},{"./detect":13,"./iterator":16}],25:[function(require,module,exports){
+},{"./detect":15,"./iterator":18}],28:[function(require,module,exports){
 var C = {};
 
 /**
@@ -22371,7 +22610,7 @@ C.fastUuid = function() {
 };
 
 module.exports = C;
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /*
  * Core Module Interface
  */
@@ -22393,4 +22632,4 @@ _.extend(_, Encodings);
 Core.root.H = _;
 
 module.exports = _;
-},{"./core":1,"./src/encoding":14,"lodash":10}]},{},[26]);
+},{"./core":1,"./src/encoding":16,"lodash":10}]},{},[29]);
