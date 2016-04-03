@@ -51,6 +51,8 @@ function preCheck(object) {
 /**
  * Register ResultSet process functions.
  *
+ * TODO: integrate ResultSet.registerComponent into this function (maybe some dependency injection?)
+ *
  * @param {String} channel channel identifier
  * @param {String} name target function mount point
  * @param {Function} funcGen function generator, which produces a function with checker
