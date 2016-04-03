@@ -4242,6 +4242,13 @@ module.exports = isObject;
  * ResultSet: Array or Element, they share the same filter/checker
  */
 
+/**
+ * Abstract ResultSet Module
+ *
+ * @static
+ * @memberof H
+ * @type {Object}
+ */
 var ARS = {};
 
 var Mini = require('../mini');
@@ -4253,6 +4260,12 @@ ARS.checkers = {};
 
 var MODULE = '__Module__';
 
+/**
+ * Register a ResultSet channel
+ * @param {String} identifier ResultSet channel identifier
+ * @param {Array} targets ResultSet element prototypes, should always contains Array.prototype
+ * @param {Function} valuePrechecker value validity prechecker function
+ */
 ARS.registerChannel = function(identifier, targets, valuePrechecker) {
     ARS.modules[identifier] = {};
     ARS.checkTargets[identifier] = targets;
@@ -4265,10 +4278,24 @@ ARS.registerChannel = function(identifier, targets, valuePrechecker) {
     });
 };
 
+/**
+ * Inner preCheck function. used to check validity of values
+ *
+ * @param {*} object value to check
+ * @returns {boolean}
+ */
 function preCheck(object) {
-    return (ARS.checkers[object[MODULE] || ""] || function() {})(object);
+    return !!(ARS.checkers[object[MODULE] || ""] || function() {})(object);
 }
 
+/**
+ * Register ResultSet process functions.
+ *
+ * @param {String} channel channel identifier
+ * @param {String} name target function mount point
+ * @param {Function} funcGen function generator, which produces a function with checker
+ * function injected. This provides ability of checking content validity to target functions.
+ */
 ARS.registerChannelFunction = function(channel, name, funcGen) {
     Mini.arrayEach(ARS.checkTargets[channel] || [], function(target) {
         if (target[name]) {
@@ -4279,6 +4306,45 @@ ARS.registerChannelFunction = function(channel, name, funcGen) {
             H.addProperty(target, name, Mini.hiddenProperty(funcGen(preCheck)));
         }
     });
+};
+
+/**
+ * Wrapper function generator.
+ *
+ * @param {String} identifier channel identifier
+ * @returns {wrap} wrapper function to wrap any value into specific ResultSet form
+ */
+ARS.wrapperGen = function(identifier) {
+    //assuming prototype exists
+    function transform(obj) {
+        if (obj.prototype && obj.prototype.__Module__ && obj.prototype.__Module__ !== identifier) {
+            obj.prototype.__Module__ = identifier;
+        }
+        if (obj.__proto__ && obj.__proto__.__Module__ && obj.__proto__.__Module__ !== identifier) {
+            obj.__proto__.__Module__ = identifier;
+        }
+    }
+
+    function transformArray(obj) {
+        if (Mini.isArrayLike(obj)) {
+            Mini.arrayEach(obj, transformArray);
+        }
+        transform(obj, identifier);
+    }
+
+    /**
+     * Wrap an object to ResultSet
+     *
+     * @static
+     * @param {Array|Object} v anything to wrap
+     * @returns {*} wrapped ResultSet object
+     */
+    function wrap(v) {
+        transformArray(v);
+        return v;
+    }
+
+    return wrap;
 };
 
 module.exports = ARS;
@@ -4953,6 +5019,7 @@ I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
     var ret = I.resultWrapper(data);
     //TODO: does it work? (not including `core` module here due to dependency error)
+    //TODO: remove dependency on static named variable `H`
     if (H.debug) {
         C.find(data, function(val, key, list) {
             try {
@@ -5428,26 +5495,20 @@ root.requestAnimationFrame = (function() {
  * ResultSet Module
  */
 var RS = {};
-var Mini = require('../mini');
 var H = require('lodash/core');
 var ARS = require('./abstractresultset');
+var I = require('./iterator');
 
 var RsIdentifier = '__isRS__';
 
+//the default ResultSet should not exclude any values
+//noinspection JSUnusedLocalSymbols
 function checker(val) {
-    if (val instanceof Array || val instanceof Object) {
-        return true;
-    }
+    return true;
 }
 
 //default channel doesn't need filter
 ARS.registerChannel(RsIdentifier, [Array.prototype, Object.prototype], checker);
-
-ARS.registerChannelFunction('__isRS__', 'toArray', function(preChecker) {
-    return function() {
-        if (preChecker(this)) return H.values(this);
-    };
-});
 
 function registerComponent(name, func) {
     ARS.registerChannelFunction(RsIdentifier, name, function(preCheck) {
@@ -5460,7 +5521,7 @@ function registerComponent(name, func) {
 function wrapFunction(fn) {
     return function() {
         if (checker(arguments[0])) {
-            fn.apply(this, arguments);
+            return fn.apply(this, arguments);
         }
     }
 }
@@ -5468,42 +5529,82 @@ function wrapFunction(fn) {
 /*
  * ResultSet Operations
  */
-function each() {
+/**
+ * Iterates an Array or Object, promise version
+ *
+ * @param {*} fn iterator function
+ * @returns {Array|Object} result composed by return statement
+ */
+function each(fn) {
     //patch `fn`
-    arguments[1] = wrapFunction(arguments[1]);
-    return H.each.apply(H, [this].concat(Array.prototype.slice.call(arguments)));
+    arguments[0] = wrapFunction(arguments[0]);
+    return I.each.apply(H, [this].concat(Array.prototype.slice.call(arguments)));
 }
 
+/**
+ * Iterates an Array or Object, return the filtered result, promise ver
+ *
+ * @param {Function} fn filter function
+ * @returns {Array|Object} filtered result
+ */
 function filter(fn) {
     fn = wrapFunction(fn);
-    return H.each(this, function(o) {
+    return I.each(this, function(o) {
         if (fn(o)) {
             return o;
         }
     });
 }
 
+/**
+ * Sort an Array or values of an Object, return the sorted array, promise ver
+ *
+ * @param {Function} fn sort function
+ * @returns {*|Array} sorted array
+ */
 function sortBy(fn) {
     fn = wrapFunction(fn);
     return H.sortBy(this, fn);
 }
 
+/**
+ * Returns the value array of an object or itself of an array.
+ *
+ * @returns {*|Array}
+ */
 function toArray() {
     return H.values(this);
 }
 
+/**
+ * Return grouped values by a grouping function of an array or an object
+ *
+ * @param {Function} fn grouping function
+ * @returns {*}
+ */
 function groupBy(fn) {
     fn = wrapFunction(fn);
     return H.groupBy(this, fn);
 }
 
+/**
+ * Joins an array or the value array of an object
+ *
+ * @param {String} separator result separator
+ * @returns {string} joined string
+ */
 function join(separator) {
     return H.values(this).join(separator || "");
 }
 
+/**
+ * Sums all numbers in an array or value array of an object
+ *
+ * @returns {number} sum value
+ */
 function sum() {
     var s = 0;
-    H.each(this || [], function(v) {
+    I.each(this || [], function(v) {
         var nv = H.isInteger(v) ? parseInt(v) : (H.isFloat(v) ? parseFloat(v) : NaN);
         if (!isNaN(nv)) {
             s += nv;
@@ -5512,14 +5613,30 @@ function sum() {
     return s;
 }
 
+/**
+ * Returns the length of an array or the value array of an object
+ *
+ * @returns {Number} length
+ * @constructor
+ */
 function Length() {
     return H.values(this).length;
 }
 
+/**
+ * Returns the array itself or the value array of an object
+ *
+ * @returns {*|Array} result array
+ */
 function values() {
     return H.values(this);
 }
 
+/**
+ * Returns the key array of an object or the index array of an array
+ *
+ * @returns {*|Array} key array
+ */
 function keys() {
     return H.keys(this);
 }
@@ -5535,27 +5652,15 @@ registerComponent("Length",  Length);
 registerComponent("values",  values);
 registerComponent("keys",    keys);
 
-//assuming prototype exists
-function transform(obj) {
-    if (obj.prototype && obj.prototype.__Module__ && obj.prototype.__Module__ !== RsIdentifier) {
-        obj.prototype.__Module__ = RsIdentifier;
-    }
-    if (obj.__proto__ && obj.__proto__.__Module__ && obj.__proto__.__Module__ !== RsIdentifier) {
-        obj.__proto__.__Module__ = RsIdentifier;
-    }
-}
-
-function transformArray(obj) {
-    if (Mini.isArrayLike(obj)) {
-        Mini.arrayEach(obj, transformArray);
-    }
-    transform(obj);
-}
-
-function wrap(v) {
-    transformArray(v);
-    return v;
-}
+/**
+ * Wrap an object to default ResultSet
+ *
+ * @static
+ * @memberof H
+ * @param {Array|Object} v anything to wrap
+ * @returns {*} wrapped ResultSet object
+ */
+var wrap = ARS.wrapperGen(RsIdentifier);
 
 RS.wrap = wrap;
 /**
@@ -5565,7 +5670,7 @@ RS.wrap = wrap;
 RS.fastWrap = wrap;
 
 module.exports = RS;
-},{"../mini":2,"./abstractresultset":10,"lodash/core":5}],21:[function(require,module,exports){
+},{"./abstractresultset":10,"./iterator":16,"lodash/core":5}],21:[function(require,module,exports){
 var S = {};
 
 var H = require('./detect');
