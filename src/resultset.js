@@ -148,6 +148,15 @@ function keys() {
     return H.keys(this);
 }
 
+/**
+ * Returns the flatten array of an nested array.
+ *
+ * @returns {*|Array}
+ */
+function flatten() {
+    return H.flatten(this) || [];
+}
+
 registerComponent("each",    each);
 registerComponent("filter",  filter);
 registerComponent("sortBy",  sortBy);
@@ -158,6 +167,7 @@ registerComponent("sum",     sum);
 registerComponent("Length",  Length);
 registerComponent("values",  values);
 registerComponent("keys",    keys);
+registerComponent("flatten", flatten);
 
 /**
  * Wrap an object to default ResultSet
