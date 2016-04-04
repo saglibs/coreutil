@@ -4291,6 +4291,8 @@ function preCheck(object) {
 /**
  * Register ResultSet process functions.
  *
+ * TODO: integrate ResultSet.registerComponent into this function (maybe some dependency injection?)
+ *
  * @param {String} channel channel identifier
  * @param {String} name target function mount point
  * @param {Function} funcGen function generator, which produces a function with checker
@@ -5641,6 +5643,15 @@ function keys() {
     return H.keys(this);
 }
 
+/**
+ * Returns the flatten array of an nested array.
+ *
+ * @returns {*|Array}
+ */
+function flatten() {
+    return H.flatten(this) || [];
+}
+
 registerComponent("each",    each);
 registerComponent("filter",  filter);
 registerComponent("sortBy",  sortBy);
@@ -5651,6 +5662,7 @@ registerComponent("sum",     sum);
 registerComponent("Length",  Length);
 registerComponent("values",  values);
 registerComponent("keys",    keys);
+registerComponent("flatten", flatten);
 
 /**
  * Wrap an object to default ResultSet
