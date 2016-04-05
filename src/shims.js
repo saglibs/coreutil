@@ -119,6 +119,13 @@ try {
     }
 }());
 
+//Polyfill for IE<9
+if (!String.prototype.trim) {
+    String.prototype.trim = function () {
+        return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    };
+}
+
 S.addProperty = addProperty;
 S.createObject = createObject;
 
