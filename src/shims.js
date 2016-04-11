@@ -129,4 +129,6 @@ if (!String.prototype.trim) {
 S.addProperty = addProperty;
 S.createObject = createObject;
 
+S.noop = function() {};
+
 module.exports = S;

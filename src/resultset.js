@@ -18,11 +18,7 @@ function checker(val) {
 ARS.registerChannel(RsIdentifier, [Array.prototype, Object.prototype], checker);
 
 function registerComponent(name, func) {
-    ARS.registerChannelFunction(RsIdentifier, name, function(preCheck) {
-        //r-w risky?
-        checker = preCheck;
-        return func;
-    });
+    ARS.registerChannelFunction(RsIdentifier, name, func);
 }
 
 function wrapFunction(fn) {
@@ -126,7 +122,7 @@ function sum() {
  * @returns {Number} length
  * @constructor
  */
-function Length() {
+function getLength() {
     return H.values(this).length;
 }
 
@@ -164,7 +160,7 @@ registerComponent("toArray", toArray);
 registerComponent("groupBy", groupBy);
 registerComponent("join",    join);
 registerComponent("sum",     sum);
-registerComponent("Length",  Length);
+registerComponent("Length",  getLength);
 registerComponent("values",  values);
 registerComponent("keys",    keys);
 registerComponent("flatten", flatten);

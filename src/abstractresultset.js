@@ -39,33 +39,22 @@ ARS.registerChannel = function(identifier, targets, valuePrechecker) {
 };
 
 /**
- * Inner preCheck function. used to check validity of values
- *
- * @param {*} object value to check
- * @returns {boolean}
- */
-function preCheck(object) {
-    return !!(ARS.checkers[object[MODULE] || ""] || function() {})(object);
-}
-
-/**
  * Register ResultSet process functions.
- *
- * TODO: integrate ResultSet.registerComponent into this function (maybe some dependency injection?)
  *
  * @param {String} channel channel identifier
  * @param {String} name target function mount point
- * @param {Function} funcGen function generator, which produces a function with checker
- * function injected. This provides ability of checking content validity to target functions.
+ * @param {Function} func Checker function. This provides ability of checking content validity to target functions.
  */
-ARS.registerChannelFunction = function(channel, name, funcGen) {
+ARS.registerChannelFunction = function(channel, name, func) {
+    /**
+     * To avoid lodash internal error. (on Object.prototype)
+     * (ResultSet member functions `filter`, `toArray` and so-on conflict with the lodash ver.)
+     * @type {*|_.noop}
+     */
+    func.push = H.noop;
     Mini.arrayEach(ARS.checkTargets[channel] || [], function(target) {
-        if (target[name]) {
-            //exist, do nothing. cuz preChecker is relative to current module
-        } else {
-            //not exist, add func to target
-            // target[name] = funcGen(ARS.checkers[channel]);
-            H.addProperty(target, name, Mini.hiddenProperty(funcGen(preCheck)));
+        if (!target[name]) {
+            H.addProperty(target, name, Mini.hiddenProperty(func));
         }
     });
 };
