@@ -11,7 +11,7 @@ var RsIdentifier = '__isRS__';
 //the default ResultSet should not exclude any values
 //noinspection JSUnusedLocalSymbols
 function checker(val) {
-    return true;
+    return !val['__isRoot__'];
 }
 
 //default channel doesn't need filter

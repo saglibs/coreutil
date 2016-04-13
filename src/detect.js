@@ -4,6 +4,8 @@
 
 var C = {};
 
+C.__isRoot__ = true;
+
 C.isArrayLike = require('lodash/isArrayLike');
 
 /**
