@@ -5846,6 +5846,7 @@ var Mini = require('../mini');
 function InformError() {
     this.message = "Inform Error Catchers";
     this.name = "InformError";
+    this.stack = new Error(this.name).stack;
 }
 
 InformError.prototype = Error.prototype;
@@ -5912,6 +5913,7 @@ var DefaultTitle = "Error:";
  * @memberof H
  * @param {String|Error} [title] title or error of current layer
  * @param {Array} [stackStack] stack trace stack (possibly)
+ * @param {boolean} [silient] the current error should be silent
  * @example
  *
  * usage:
@@ -5922,7 +5924,7 @@ var DefaultTitle = "Error:";
  * variant:
  * error.printStackTrace() -> printStackTrace(error, [])
  */
-C.printStackTrace = function(title, stackStack) {
+C.printStackTrace = function(title, stackStack, silient) {
     if (Mini.isArrayLike(title)) {
         //noinspection JSValidateTypes for arguments
         stackStack = title;
@@ -5937,7 +5939,7 @@ C.printStackTrace = function(title, stackStack) {
     if (!Mini.isArrayLike(stackStack) || typeof stackStack == 'string') {
         stackStack = [stackStack];
     }
-    stackStack.unshift(C.getStackTrace(title));
+    if (!silient) stackStack.unshift(C.getStackTrace(title));
     logStack.call(this, stackStack);
 };
 
