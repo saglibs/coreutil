@@ -16,6 +16,6 @@ _.extend(_, Encodings);
 //require('../dom');
 //require('../m3d');
 
-Core.root.H = _;
+Core.root[Core.__name] = _;
 
 module.exports = _;
