@@ -101,7 +101,7 @@ module.exports = getLength;
 (function (global){
 /**
  * @license
- * lodash 4.7.0 (Custom Build) <https://lodash.com/>
+ * lodash 4.10.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash core -o ./dist/lodash.core.js`
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
@@ -114,7 +114,7 @@ module.exports = getLength;
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.7.0';
+  var VERSION = '4.10.0';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -458,7 +458,8 @@ module.exports = getLength;
   var idCounter = 0;
 
   /**
-   * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+   * Used to resolve the
+   * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
    * of values.
    */
   var objectToString = objectProto.toString;
@@ -502,9 +503,9 @@ module.exports = getLength;
    * Shortcut fusion is an optimization to merge iteratee calls; this avoids
    * the creation of intermediate arrays and can greatly reduce the number of
    * iteratee executions. Sections of a chain sequence qualify for shortcut
-   * fusion if the section is applied to an array of at least two hundred
-   * elements and any iteratees accept only one argument. The heuristic for
-   * whether a section qualifies for shortcut fusion is subject to change.
+   * fusion if the section is applied to an array of at least `200` elements
+   * and any iteratees accept only one argument. The heuristic for whether a
+   * section qualifies for shortcut fusion is subject to change.
    *
    * Chaining is supported in custom builds as long as the `_#value` method is
    * directly or indirectly included in the build.
@@ -740,23 +741,24 @@ module.exports = getLength;
    * @private
    * @param {Array} array The array to flatten.
    * @param {number} depth The maximum recursion depth.
-   * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+   * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+   * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
    * @param {Array} [result=[]] The initial result value.
    * @returns {Array} Returns the new flattened array.
    */
-  function baseFlatten(array, depth, isStrict, result) {
-    result || (result = []);
-
+  function baseFlatten(array, depth, predicate, isStrict, result) {
     var index = -1,
         length = array.length;
 
+    predicate || (predicate = isFlattenable);
+    result || (result = []);
+
     while (++index < length) {
       var value = array[index];
-      if (depth > 0 && isArrayLikeObject(value) &&
-          (isStrict || isArray(value) || isArguments(value))) {
+      if (depth > 0 && predicate(value)) {
         if (depth > 1) {
           // Recursively flatten arrays (susceptible to call stack limits).
-          baseFlatten(value, depth - 1, isStrict, result);
+          baseFlatten(value, depth - 1, predicate, isStrict, result);
         } else {
           arrayPush(result, value);
         }
@@ -769,7 +771,7 @@ module.exports = getLength;
 
   /**
    * The base implementation of `baseForOwn` which iterates over `object`
-   * properties returned by `keysFunc` invoking `iteratee` for each property.
+   * properties returned by `keysFunc` and invokes `iteratee` for each property.
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *
    * @private
@@ -1241,8 +1243,8 @@ module.exports = getLength;
    */
   function createCtorWrapper(Ctor) {
     return function() {
-      // Use a `switch` statement to work with class constructors.
-      // See http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
+      // Use a `switch` statement to work with class constructors. See
+      // http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
       // for more details.
       var args = arguments;
       var thisBinding = baseCreate(Ctor.prototype),
@@ -1255,9 +1257,8 @@ module.exports = getLength;
   }
 
   /**
-   * Creates a function that wraps `func` to invoke it with the optional `this`
-   * binding of `thisArg` and the `partials` prepended to those provided to
-   * the wrapper.
+   * Creates a function that wraps `func` to invoke it with the `this` binding
+   * of `thisArg` and `partials` prepended to the arguments it receives.
    *
    * @private
    * @param {Function} func The function to wrap.
@@ -1391,7 +1392,8 @@ module.exports = getLength;
       case regexpTag:
       case stringTag:
         // Coerce regexes to strings and treat strings, primitives and objects,
-        // as equal. See https://es5.github.io/#x15.10.6.4 for more details.
+        // as equal. See http://www.ecma-international.org/ecma-262/6.0/#sec-regexp.prototype.tostring
+        // for more details.
         return object == (other + '');
 
     }
@@ -1491,6 +1493,17 @@ module.exports = getLength;
       return baseTimes(length, String);
     }
     return null;
+  }
+
+  /**
+   * Checks if `value` is a flattenable `arguments` object or array.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+   */
+  function isFlattenable(value) {
+    return isArrayLikeObject(value) && (isArray(value) || isArguments(value));
   }
 
   /**
@@ -1627,8 +1640,8 @@ module.exports = getLength;
   /**
    * Gets the index at which the first occurrence of `value` is found in `array`
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-   * for equality comparisons. If `fromIndex` is negative, it's used as the offset
-   * from the end of `array`.
+   * for equality comparisons. If `fromIndex` is negative, it's used as the
+   * offset from the end of `array`.
    *
    * @static
    * @memberOf _
@@ -1973,7 +1986,7 @@ module.exports = getLength;
   }
 
   /**
-   * Iterates over elements of `collection` invoking `iteratee` for each element.
+   * Iterates over elements of `collection` and invokes `iteratee` for each element.
    * The iteratee is invoked with three arguments: (value, index|key, collection).
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *
@@ -2006,7 +2019,7 @@ module.exports = getLength;
   }
 
   /**
-   * Creates an array of values by running each element in `collection` through
+   * Creates an array of values by running each element in `collection` thru
    * `iteratee`. The iteratee is invoked with three arguments:
    * (value, index|key, collection).
    *
@@ -2014,10 +2027,10 @@ module.exports = getLength;
    * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
    *
    * The guarded methods are:
-   * `ary`, `curry`, `curryRight`, `drop`, `dropRight`, `every`, `fill`,
-   * `invert`, `parseInt`, `random`, `range`, `rangeRight`, `slice`, `some`,
-   * `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimEnd`, `trimStart`,
-   * and `words`
+   * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
+   * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
+   * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
+   * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
    *
    * @static
    * @memberOf _
@@ -2054,9 +2067,9 @@ module.exports = getLength;
 
   /**
    * Reduces `collection` to a value which is the accumulated result of running
-   * each element in `collection` through `iteratee`, where each successive
+   * each element in `collection` thru `iteratee`, where each successive
    * invocation is supplied the return value of the previous. If `accumulator`
-   * is not given the first element of `collection` is used as the initial
+   * is not given, the first element of `collection` is used as the initial
    * value. The iteratee is invoked with four arguments:
    * (accumulator, value, index|key, collection).
    *
@@ -2165,7 +2178,7 @@ module.exports = getLength;
 
   /**
    * Creates an array of elements, sorted in ascending order by the results of
-   * running each element in a collection through each iteratee. This method
+   * running each element in a collection thru each iteratee. This method
    * performs a stable sort, that is, it preserves the original sort order of
    * equal elements. The iteratees are invoked with one argument: (value).
    *
@@ -2175,8 +2188,7 @@ module.exports = getLength;
    * @category Collection
    * @param {Array|Object} collection The collection to iterate over.
    * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
-   *  [iteratees=[_.identity]] The iteratees to sort by, specified individually
-   *  or in arrays.
+   *  [iteratees=[_.identity]] The iteratees to sort by.
    * @returns {Array} Returns the new sorted array.
    * @example
    *
@@ -2247,8 +2259,7 @@ module.exports = getLength;
 
   /**
    * Creates a function that invokes `func` with the `this` binding of `thisArg`
-   * and prepends any additional `_.bind` arguments to those provided to the
-   * bound function.
+   * and `partials` prepended to the arguments it receives.
    *
    * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
    * may be used as a placeholder for partially applied arguments.
@@ -2891,8 +2902,9 @@ module.exports = getLength;
   }
 
   /**
-   * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-   * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+   * Checks if `value` is the
+   * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+   * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
    *
    * @static
    * @memberOf _
@@ -2950,9 +2962,10 @@ module.exports = getLength;
   /**
    * Checks if `value` is `NaN`.
    *
-   * **Note:** This method is not the same as
-   * [`isNaN`](https://es5.github.io/#x15.1.2.4) which returns `true` for
-   * `undefined` and other non-numeric values.
+   * **Note:** This method is based on
+   * [`Number.isNaN`](https://mdn.io/Number/isNaN) and is not the same as
+   * global [`isNaN`](https://mdn.io/isNaN) which returns `true` for
+   * `undefined` and other non-number values.
    *
    * @static
    * @memberOf _
@@ -3210,8 +3223,8 @@ module.exports = getLength;
   var toNumber = Number;
 
   /**
-   * Converts `value` to a string if it's not one. An empty string is returned
-   * for `null` and `undefined` values. The sign of `-0` is preserved.
+   * Converts `value` to a string. An empty string is returned for `null`
+   * and `undefined` values. The sign of `-0` is preserved.
    *
    * @static
    * @memberOf _
@@ -3311,7 +3324,7 @@ module.exports = getLength;
   /**
    * This method is like `_.assignIn` except that it accepts `customizer`
    * which is invoked to produce the assigned values. If `customizer` returns
-   * `undefined` assignment is handled by the method instead. The `customizer`
+   * `undefined`, assignment is handled by the method instead. The `customizer`
    * is invoked with five arguments: (objValue, srcValue, key, object, source).
    *
    * **Note:** This method mutates `object`.
@@ -3342,7 +3355,7 @@ module.exports = getLength;
 
   /**
    * Creates an object that inherits from the `prototype` object. If a
-   * `properties` object is given its own enumerable string keyed properties
+   * `properties` object is given, its own enumerable string keyed properties
    * are assigned to the created object.
    *
    * @static
@@ -3416,16 +3429,16 @@ module.exports = getLength;
    * @returns {boolean} Returns `true` if `path` exists, else `false`.
    * @example
    *
-   * var object = { 'a': { 'b': { 'c': 3 } } };
-   * var other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
+   * var object = { 'a': { 'b': 2 } };
+   * var other = _.create({ 'a': _.create({ 'b': 2 }) });
    *
    * _.has(object, 'a');
    * // => true
    *
-   * _.has(object, 'a.b.c');
+   * _.has(object, 'a.b');
    * // => true
    *
-   * _.has(object, ['a', 'b', 'c']);
+   * _.has(object, ['a', 'b']);
    * // => true
    *
    * _.has(other, 'a');
@@ -3534,8 +3547,7 @@ module.exports = getLength;
    * @memberOf _
    * @category Object
    * @param {Object} object The source object.
-   * @param {...(string|string[])} [props] The property identifiers to pick,
-   *  specified individually or in arrays.
+   * @param {...(string|string[])} [props] The property identifiers to pick.
    * @returns {Object} Returns the new object.
    * @example
    *
@@ -3682,8 +3694,8 @@ module.exports = getLength;
 
   /**
    * Creates a function that invokes `func` with the arguments of the created
-   * function. If `func` is a property name the created function returns the
-   * property value for a given element. If `func` is an array or object the
+   * function. If `func` is a property name, the created function returns the
+   * property value for a given element. If `func` is an array or object, the
    * created function returns `true` for elements that contain the equivalent
    * source properties, otherwise it returns `false`.
    *
@@ -3754,7 +3766,7 @@ module.exports = getLength;
 
   /**
    * Adds all own enumerable string keyed function properties of a source
-   * object to the destination object. If `object` is a function then methods
+   * object to the destination object. If `object` is a function, then methods
    * are added to its prototype as well.
    *
    * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
@@ -3864,7 +3876,7 @@ module.exports = getLength;
   }
 
   /**
-   * Generates a unique ID. If `prefix` is given the ID is appended to it.
+   * Generates a unique ID. If `prefix` is given, the ID is appended to it.
    *
    * @static
    * @since 0.1.0
@@ -3888,7 +3900,7 @@ module.exports = getLength;
   /*------------------------------------------------------------------------*/
 
   /**
-   * Computes the maximum value of `array`. If `array` is empty or falsey
+   * Computes the maximum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static
@@ -3912,7 +3924,7 @@ module.exports = getLength;
   }
 
   /**
-   * Computes the minimum value of `array`. If `array` is empty or falsey
+   * Computes the minimum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static
@@ -4134,7 +4146,8 @@ var funcTag = '[object Function]',
 var objectProto = Object.prototype;
 
 /**
- * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
@@ -4207,8 +4220,9 @@ module.exports = isLength;
 
 },{}],9:[function(require,module,exports){
 /**
- * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
  * @memberOf _
@@ -4928,6 +4942,7 @@ module.exports = E;
  */
 var C = require('lodash/core');
 var Mini = require('../mini');
+var H = require('./stacktrace');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;
@@ -4970,6 +4985,7 @@ I.resultWrapper = function(v) {
  */
 I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
+    stackStack.push(H.getStackTrace());
     var ret = I.resultWrapper(obj);
     if (H.debug) {
         C.each(obj, function(val, key, list) {
@@ -5008,6 +5024,7 @@ I.every = C.each;
  */
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
+    stackStack.push(H.getStackTrace());
     var ret = I.resultWrapper(data);
     //TODO: does it work? (not including `core` module here due to dependency error)
     //TODO: remove dependency on static named variable `H`
@@ -5118,7 +5135,7 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../mini":2,"lodash/core":5}],17:[function(require,module,exports){
+},{"../mini":2,"./stacktrace":22,"lodash/core":5}],17:[function(require,module,exports){
 /*
  * Math-Related Module
  */
