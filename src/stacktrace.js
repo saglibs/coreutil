@@ -5,6 +5,7 @@ var Mini = require('../mini');
 function InformError() {
     this.message = "Inform Error Catchers";
     this.name = "InformError";
+    this.stack = new Error(this.name).stack;
 }
 
 InformError.prototype = Error.prototype;
