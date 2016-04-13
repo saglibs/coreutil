@@ -10,11 +10,66 @@
 <div id="qunit-fixture"></div>
 <script src="../node_modules/qunitjs/qunit/qunit.js"></script>
 <script src="../dist/utils.bundle.js"></script>
+<script>
+    window.H = $H;
+</script>
 <script src="./testarraybuffer.js"></script>
 <script src="./testars.js"></script>
 <script src="./teststacktrace.js"></script>
 
 <script src="./testiterator.js"></script>
+
+<script>
+    var b = 2;
+    function a() {
+        return eval('b');
+    }
+
+    function e(func) {
+        return func();
+    }
+
+    function f(func) {
+        return eval('b') + func();
+    }
+
+    function er() {
+        this.b = 0;
+        if (!eval('b')) {
+            throw new Error('a')
+        }
+    }
+
+    er();
+
+    var d = {
+        b: 4
+    };
+
+    console.log('eval 2: ' + a());
+
+    console.log('eval 2: ' + e(a));
+
+    function c(func) {
+        this.b = 3;
+
+        console.log('eval 3: ' + a());
+
+        console.log(a.apply(null, []));
+        console.log(a.apply(d, []));
+        console.log(a.call(d));
+
+        e(function() {
+            console.log('eval ?: ' + a());
+        });
+
+        console.log('nest 2: ' + e(func))
+
+        console.log('nest 2: ' + f(func))
+    }
+
+    c(a)
+</script>
 
 </body>
 </html>

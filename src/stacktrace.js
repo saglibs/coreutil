@@ -2,6 +2,38 @@ var C = {};
 
 var Mini = require('../mini');
 
+function stack() {
+    this.stacks = [];
+    this.push = function(e) {
+        if (e instanceof Error) {
+            this.stacks.push(e.stack);
+        } else if (typeof e === 'string') {
+            if (e.indexOf('\n') === -1) {
+                //title
+                this.stacks.push(new Error(e));
+            } else {
+                //stack
+                var error = new Error("Nested Error");
+                error.stack = e;
+                this.stacks.push(error);
+            }
+        }
+    };
+    this.printAll = function() {
+        var join = [];
+        Mini.arrayEach(this.stacks, function(e) {
+            // join.push(e.message);
+            join = join.concat((e.stack || "").split("\n"));
+        });
+        console.error(join.join("\n"));
+        if (!eval('__catching')) {
+            throw new InformError();
+        }
+    };
+}
+
+C.stack = stack;
+
 function InformError() {
     this.message = "Inform Error Catchers";
     this.name = "InformError";
