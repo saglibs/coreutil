@@ -77,8 +77,13 @@ ARS.wrapperGen = function(identifier) {
     }
 
     function transformArray(obj) {
-        if (Mini.isArrayLike(obj)) {
-            Mini.arrayEach(obj, transformArray);
+        if (Mini.isArrayLike(obj) && typeof obj != 'string') {
+            Mini.arrayEach(obj, function(son) {
+                //if input is a string, will cause infinite loop
+                if (son !== obj || typeof obj !== 'object') {
+                    transformArray(son);
+                }
+            });
         }
         transform(obj, identifier);
     }
