@@ -3,7 +3,8 @@
  */
 var C = require('lodash/core');
 var Mini = require('../mini');
-var H = require('./stacktrace');
+var E = require('./stacktrace');
+var D = require('./detect');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;
@@ -46,16 +47,23 @@ I.resultWrapper = function(v) {
  */
 I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
-    stackStack.push(H.getStackTrace());
+    if (typeof stackStack == 'string' || !Mini.isArrayLike(stackStack)) {
+        stackStack = [stackStack];
+    }
+    stackStack.unshift(E.getStackTrace());
     var ret = I.resultWrapper(obj);
-    if (H.debug) {
+    if (D.H.debug) {
+        var print = false;
         C.each(obj, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
             } catch (e) {
                 //E.printStackTrace only accepts one parameter
-                e.printStackTrace(stackStack);
+                if (!print) {
+                    e.printStackTrace(stackStack);
+                    print = true;
+                }
             }
         });
     } else {
@@ -85,18 +93,25 @@ I.every = C.each;
  */
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
-    stackStack.push(H.getStackTrace());
+    if (typeof stackStack == 'string' || !Mini.isArrayLike(stackStack)) {
+        stackStack = [stackStack];
+    }
+    stackStack.unshift(E.getStackTrace());
     var ret = I.resultWrapper(data);
     //TODO: does it work? (not including `core` module here due to dependency error)
     //TODO: remove dependency on static named variable `H`
-    if (H.debug) {
+    if (D.H.debug) {
+        var print = false;
         C.find(data, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
                 return callable(val, key, list);
             } catch (e) {
-                e.printStackTrace('Nested error', stackStack);
+                if (!print) {
+                    e.printStackTrace(stackStack);
+                    print = true;
+                }
             }
         });
     } else {

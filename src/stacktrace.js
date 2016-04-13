@@ -2,7 +2,28 @@ var C = {};
 
 var Mini = require('../mini');
 
-var log = (console.error || console.log);
+var clog = function (content) {
+    var func = (console.error || console.log);
+    func.call(console, content);
+};
+
+var logStack = function(stackStack) {
+    var joined = [];
+    Mini.arrayEach(stackStack || [], function(stack) {
+        if (typeof stack == 'string') {
+            joined = joined.concat(stack.split("\n"));
+        } else if (stack instanceof Error) {
+            joined = joined.concat(stack.stack.split("\n"));
+        }
+    });
+    if (joined.length != 0) {
+        var ret = joined[0];
+        for (var i = 1; i < joined.length; i++) {
+            ret += "\n" + joined[i];
+        }
+        clog(ret);
+    }
+};
 
 /**
  * Generate stack trace string. (separated by `\n`)
@@ -22,6 +43,7 @@ C.getStackTrace = function(title) {
         split.shift();
         split.shift();
         split.unshift(t);
+        // split.unshift(callstack);
         return split.join('\n');
     }
     return e.stack;
@@ -48,7 +70,6 @@ var DefaultTitle = "Error:";
  * error.printStackTrace() -> printStackTrace(error, [])
  */
 C.printStackTrace = function(title, stackStack) {
-    stackStack = stackStack || [];
     if (Mini.isArrayLike(title)) {
         //noinspection JSValidateTypes for arguments
         stackStack = title;
@@ -59,12 +80,12 @@ C.printStackTrace = function(title, stackStack) {
         }
     }
     title = title || DefaultTitle;
-    stackStack.unshift(C.getStackTrace(title));
-    var n = stackStack.length;
-    var l = stackStack.length;
-    for (l++; --l;) {
-        log(stackStack[n - l]);
+    stackStack = stackStack || [];
+    if (!Mini.isArrayLike(stackStack) || typeof stackStack == 'string') {
+        stackStack = [stackStack];
     }
+    stackStack.unshift(C.getStackTrace(title));
+    logStack(stackStack);
 };
 
 /**

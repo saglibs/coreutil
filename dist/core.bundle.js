@@ -4942,7 +4942,8 @@ module.exports = E;
  */
 var C = require('lodash/core');
 var Mini = require('../mini');
-var H = require('./stacktrace');
+var E = require('./stacktrace');
+var D = require('./detect');
 
 var I = function(template) {
     I.template = template || I.resultWrapper;
@@ -4985,16 +4986,23 @@ I.resultWrapper = function(v) {
  */
 I.each = function(obj, fn, stackStack) {
     stackStack = stackStack || [];
-    stackStack.push(H.getStackTrace());
+    if (typeof stackStack == 'string' || !Mini.isArrayLike(stackStack)) {
+        stackStack = [stackStack];
+    }
+    stackStack.unshift(E.getStackTrace());
     var ret = I.resultWrapper(obj);
-    if (H.debug) {
+    if (D.H.debug) {
+        var print = false;
         C.each(obj, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
             } catch (e) {
                 //E.printStackTrace only accepts one parameter
-                e.printStackTrace(stackStack);
+                if (!print) {
+                    e.printStackTrace(stackStack);
+                    print = true;
+                }
             }
         });
     } else {
@@ -5024,18 +5032,25 @@ I.every = C.each;
  */
 I.until = function(data, fn, callable, stackStack) {
     stackStack = stackStack || [];
-    stackStack.push(H.getStackTrace());
+    if (typeof stackStack == 'string' || !Mini.isArrayLike(stackStack)) {
+        stackStack = [stackStack];
+    }
+    stackStack.unshift(E.getStackTrace());
     var ret = I.resultWrapper(data);
     //TODO: does it work? (not including `core` module here due to dependency error)
     //TODO: remove dependency on static named variable `H`
-    if (H.debug) {
+    if (D.H.debug) {
+        var print = false;
         C.find(data, function(val, key, list) {
             try {
                 var r = fn(val, key, list);
                 if (r) ret[key] = r;
                 return callable(val, key, list);
             } catch (e) {
-                e.printStackTrace('Nested error', stackStack);
+                if (!print) {
+                    e.printStackTrace(stackStack);
+                    print = true;
+                }
             }
         });
     } else {
@@ -5135,7 +5150,7 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../mini":2,"./stacktrace":22,"lodash/core":5}],17:[function(require,module,exports){
+},{"../mini":2,"./detect":14,"./stacktrace":22,"lodash/core":5}],17:[function(require,module,exports){
 /*
  * Math-Related Module
  */
@@ -5824,7 +5839,28 @@ var C = {};
 
 var Mini = require('../mini');
 
-var log = (console.error || console.log);
+var clog = function (content) {
+    var func = (console.error || console.log);
+    func.call(console, content);
+};
+
+var logStack = function(stackStack) {
+    var joined = [];
+    Mini.arrayEach(stackStack || [], function(stack) {
+        if (typeof stack == 'string') {
+            joined = joined.concat(stack.split("\n"));
+        } else if (stack instanceof Error) {
+            joined = joined.concat(stack.stack.split("\n"));
+        }
+    });
+    if (joined.length != 0) {
+        var ret = joined[0];
+        for (var i = 1; i < joined.length; i++) {
+            ret += "\n" + joined[i];
+        }
+        clog(ret);
+    }
+};
 
 /**
  * Generate stack trace string. (separated by `\n`)
@@ -5844,6 +5880,7 @@ C.getStackTrace = function(title) {
         split.shift();
         split.shift();
         split.unshift(t);
+        // split.unshift(callstack);
         return split.join('\n');
     }
     return e.stack;
@@ -5870,7 +5907,6 @@ var DefaultTitle = "Error:";
  * error.printStackTrace() -> printStackTrace(error, [])
  */
 C.printStackTrace = function(title, stackStack) {
-    stackStack = stackStack || [];
     if (Mini.isArrayLike(title)) {
         //noinspection JSValidateTypes for arguments
         stackStack = title;
@@ -5881,12 +5917,12 @@ C.printStackTrace = function(title, stackStack) {
         }
     }
     title = title || DefaultTitle;
-    stackStack.unshift(C.getStackTrace(title));
-    var n = stackStack.length;
-    var l = stackStack.length;
-    for (l++; --l;) {
-        log(stackStack[n - l]);
+    stackStack = stackStack || [];
+    if (!Mini.isArrayLike(stackStack) || typeof stackStack == 'string') {
+        stackStack = [stackStack];
     }
+    stackStack.unshift(C.getStackTrace(title));
+    logStack(stackStack);
 };
 
 /**
