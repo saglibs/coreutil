@@ -20,6 +20,8 @@ var RS = require('./resultset');
 
 var C = {};
 
+C.__isRoot__ = true;
+
 _.extend(C, _);
 _.extend(C, Detect);
 _.extend(C, StackTrace);
