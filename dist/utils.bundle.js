@@ -21563,7 +21563,7 @@ I.each = function(obj, fn, stackStack) {
     }
     stackStack.unshift(E.getStackTrace());
     var ret = I.resultWrapper(obj);
-    if (D.H.debug) {
+    if (D.root.H.debug) {
         var print = false;
         C.each(obj, function(val, key, list) {
             try {
@@ -21611,7 +21611,7 @@ I.until = function(data, fn, callable, stackStack) {
     var ret = I.resultWrapper(data);
     //TODO: does it work? (not including `core` module here due to dependency error)
     //TODO: remove dependency on static named variable `H`
-    if (D.H.debug) {
+    if (D.root.H.debug) {
         var print = false;
         C.find(data, function(val, key, list) {
             try {
