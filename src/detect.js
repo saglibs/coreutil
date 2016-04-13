@@ -6,6 +6,8 @@ var C = {};
 
 C.__isRoot__ = true;
 
+C.__name = '$H';
+
 C.isArrayLike = require('lodash/isArrayLike');
 
 /**

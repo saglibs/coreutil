@@ -20307,8 +20307,13 @@ ARS.wrapperGen = function(identifier) {
     }
 
     function transformArray(obj) {
-        if (Mini.isArrayLike(obj)) {
-            Mini.arrayEach(obj, transformArray);
+        if (Mini.isArrayLike(obj) && typeof obj != 'string') {
+            Mini.arrayEach(obj, function(son) {
+                //if input is a string, will cause infinite loop
+                if (son !== obj || typeof obj !== 'object') {
+                    transformArray(son);
+                }
+            });
         }
         transform(obj, identifier);
     }
@@ -20507,6 +20512,8 @@ var RS = require('./resultset');
 
 var C = {};
 
+C.__isRoot__ = true;
+
 _.extend(C, _);
 _.extend(C, Detect);
 _.extend(C, StackTrace);
@@ -20605,6 +20612,10 @@ module.exports = C;
  */
 
 var C = {};
+
+C.__isRoot__ = true;
+
+C.__name = '$H';
 
 C.isArrayLike = require('lodash/isArrayLike');
 
@@ -21567,7 +21578,7 @@ I.each = function(obj, fn, stackStack) {
     }
     stackStack.unshift(E.getStackTrace());
     var ret = I.resultWrapper(obj);
-    if (D.root.H.debug) {
+    if (D.root[D.__name].debug) {
         var print = false;
         C.each(obj, function(val, key, list) {
             try {
@@ -21615,7 +21626,7 @@ I.until = function(data, fn, callable, stackStack) {
     var ret = I.resultWrapper(data);
     //TODO: does it work? (not including `core` module here due to dependency error)
     //TODO: remove dependency on static named variable `H`
-    if (D.root.H.debug) {
+    if (D.root[D.__name].debug) {
         var print = false;
         C.find(data, function(val, key, list) {
             try {
@@ -22103,7 +22114,7 @@ var RsIdentifier = '__isRS__';
 //the default ResultSet should not exclude any values
 //noinspection JSUnusedLocalSymbols
 function checker(val) {
-    return true;
+    return !val['__isRoot__'];
 }
 
 //default channel doesn't need filter
