@@ -20656,6 +20656,10 @@ try {
     C.root = window;
 }
 
+C.root.__catching = false;
+
+C.__catching = false;
+
 //noinspection JSUnresolvedVariable
 // C.root = C.isNodejs ? GLOBAL : window;
 
@@ -22411,9 +22415,21 @@ var C = {};
 
 var Mini = require('../mini');
 
+function InformError() {
+    this.message = "Inform Error Catchers";
+    this.name = "InformError";
+}
+
+InformError.prototype = Error.prototype;
+
+C.InformError = InformError;
+
 var clog = function (content) {
-    var func = (console.error || console.log);
-    func.call(console, content);
+    console.error(content);
+    //throw a simple error to inform catchers, eval(someone is catching)
+    if (eval('__catching')) {
+        throw new InformError("Nested Error");
+    }
 };
 
 var logStack = function(stackStack) {
@@ -22430,7 +22446,7 @@ var logStack = function(stackStack) {
         for (var i = 1; i < joined.length; i++) {
             ret += "\n" + joined[i];
         }
-        clog(ret);
+        clog.apply(this, [ret]);
     }
 };
 
@@ -22494,7 +22510,7 @@ C.printStackTrace = function(title, stackStack) {
         stackStack = [stackStack];
     }
     stackStack.unshift(C.getStackTrace(title));
-    logStack(stackStack);
+    logStack.call(this, stackStack);
 };
 
 /**

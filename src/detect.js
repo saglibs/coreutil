@@ -54,6 +54,10 @@ try {
     C.root = window;
 }
 
+C.root.__catching = false;
+
+C.__catching = false;
+
 //noinspection JSUnresolvedVariable
 // C.root = C.isNodejs ? GLOBAL : window;
 
