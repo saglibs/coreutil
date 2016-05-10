@@ -28,24 +28,37 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.0</version>
-                <configuration>
-                    <workingDirectory>.</workingDirectory>
-                    <installDirectory>target</installDirectory>
-                    <nodeVersion>v5.3.0</nodeVersion>
-                    <npmVersion>3.3.12</npmVersion>
-                    <downloadRoot>https://nodejs.org/dist/</downloadRoot>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
                 <executions>
                     <execution>
-                        <id>gulp build</id>
+                        <id>npm install task</id>
                         <goals>
-                            <goal>gulp</goal>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <executable>npm</executable>
+                            <workingDirectory>.</workingDirectory>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>run gulp task</id>
+                        <goals>
+                            <goal>exec</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
+                            <executable>node</executable>
+                            <workingDirectory>.</workingDirectory>
+                            <arguments>
+                                <argument>node_modules/gulp/bin/gulp.js</argument>
+                                <argument>default</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
