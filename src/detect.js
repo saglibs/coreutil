@@ -175,8 +175,8 @@ C.isWebGLSupported = function () {
     return root.hasOwnProperty("__gl") ? root.__gl : root.__gl = !!(root['WebGLRenderingContext'] && canvas.getContext('webgl'));
 };
 
-C.isCanvasSupported();
-C.isWebGLSupported();
+// C.isCanvasSupported();
+// C.isWebGLSupported();
 
 /**
  * Language string

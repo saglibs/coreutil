@@ -3,7 +3,7 @@ var Core = require('./src/core');
 
 Core.extend(Core, require('./src/iterator'));
 
-Core.root.H = Core;
+Core.root[Core.__name] = Core;
 
 module.exports = Core;
 },{"./src/core":13,"./src/iterator":16}],2:[function(require,module,exports){
@@ -4808,8 +4808,8 @@ C.isWebGLSupported = function () {
     return root.hasOwnProperty("__gl") ? root.__gl : root.__gl = !!(root['WebGLRenderingContext'] && canvas.getContext('webgl'));
 };
 
-C.isCanvasSupported();
-C.isWebGLSupported();
+// C.isCanvasSupported();
+// C.isWebGLSupported();
 
 /**
  * Language string
