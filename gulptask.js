@@ -10,7 +10,7 @@ var source     = require('vinyl-source-stream');
 var del        = require('del');
 
 function getStream(list, bundles, dist) {
-    dist = dist || './dist';
+    dist = dist || './src/main/resources/dist';
     list = list || [];
     bundles = bundles || [];
 

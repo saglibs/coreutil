@@ -1,12 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Core = require('./src/core');
+var Core = require('./src/main/javascript/core');
 
-Core.extend(Core, require('./src/iterator'));
+Core.extend(Core, require('./src/main/javascript/iterator'));
 
 Core.root[Core.__name] = Core;
 
 module.exports = Core;
-},{"./src/core":13,"./src/iterator":16}],2:[function(require,module,exports){
+},{"./src/main/javascript/core":13,"./src/main/javascript/iterator":16}],2:[function(require,module,exports){
 /*
  * MiniCore module
  *
@@ -69,7 +69,7 @@ module.exports = Mini;
  *
  * @private
  * @param {string} key The key of the property to get.
- * @returns {Function} Returns the new function.
+ * @returns {Function} Returns the new accessor function.
  */
 function baseProperty(key) {
   return function(object) {
@@ -101,8 +101,7 @@ module.exports = getLength;
 (function (global){
 /**
  * @license
- * lodash 4.7.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash core -o ./dist/lodash.core.js`
+ * lodash <https://lodash.com/>
  * Copyright jQuery Foundation and other contributors <https://jquery.org/>
  * Released under MIT license <https://lodash.com/license>
  * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
@@ -114,7 +113,7 @@ module.exports = getLength;
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.7.0';
+  var VERSION = '4.12.0';
 
   /** Used as the `TypeError` message for "Functions" methods. */
   var FUNC_ERROR_TEXT = 'Expected a function';
@@ -207,18 +206,6 @@ module.exports = getLength;
   /*--------------------------------------------------------------------------*/
 
   /**
-   * Creates a new array concatenating `array` with `other`.
-   *
-   * @private
-   * @param {Array} array The first array to concatenate.
-   * @param {Array} other The second array to concatenate.
-   * @returns {Array} Returns the new concatenated array.
-   */
-  function arrayConcat(array, other) {
-    return arrayPush(copyArray(array), values);
-  }
-
-  /**
    * Appends the elements of `values` to `array`.
    *
    * @private
@@ -229,35 +216,6 @@ module.exports = getLength;
   function arrayPush(array, values) {
     array.push.apply(array, values);
     return array;
-  }
-
-  /**
-   * The base implementation of methods like `_.max` and `_.min` which accepts a
-   * `comparator` to determine the extremum value.
-   *
-   * @private
-   * @param {Array} array The array to iterate over.
-   * @param {Function} iteratee The iteratee invoked per iteration.
-   * @param {Function} comparator The comparator used to compare values.
-   * @returns {*} Returns the extremum value.
-   */
-  function baseExtremum(array, iteratee, comparator) {
-    var index = -1,
-        length = array.length;
-
-    while (++index < length) {
-      var value = array[index],
-          current = iteratee(value);
-
-      if (current != null && (computed === undefined
-            ? current === current
-            : comparator(current, computed)
-          )) {
-        var computed = current,
-            result = value;
-      }
-    }
-    return result;
   }
 
   /**
@@ -353,38 +311,6 @@ module.exports = getLength;
   }
 
   /**
-   * Compares values to sort them in ascending order.
-   *
-   * @private
-   * @param {*} value The value to compare.
-   * @param {*} other The other value to compare.
-   * @returns {number} Returns the sort order indicator for `value`.
-   */
-  function compareAscending(value, other) {
-    if (value !== other) {
-      var valIsNull = value === null,
-          valIsUndef = value === undefined,
-          valIsReflexive = value === value;
-
-      var othIsNull = other === null,
-          othIsUndef = other === undefined,
-          othIsReflexive = other === other;
-
-      if ((value > other && !othIsNull) || !valIsReflexive ||
-          (valIsNull && !othIsUndef && othIsReflexive) ||
-          (valIsUndef && othIsReflexive)) {
-        return 1;
-      }
-      if ((value < other && !valIsNull) || !othIsReflexive ||
-          (othIsNull && !valIsUndef && valIsReflexive) ||
-          (othIsUndef && valIsReflexive)) {
-        return -1;
-      }
-    }
-    return 0;
-  }
-
-  /**
    * Used by `_.escape` to convert characters to HTML entities.
    *
    * @private
@@ -412,20 +338,6 @@ module.exports = getLength;
       } catch (e) {}
     }
     return result;
-  }
-
-  /**
-   * Checks if `value` is a valid array-like index.
-   *
-   * @private
-   * @param {*} value The value to check.
-   * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-   * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-   */
-  function isIndex(value, length) {
-    value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-    length = length == null ? MAX_SAFE_INTEGER : length;
-    return value > -1 && value % 1 == 0 && value < length;
   }
 
   /**
@@ -458,7 +370,8 @@ module.exports = getLength;
   var idCounter = 0;
 
   /**
-   * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+   * Used to resolve the
+   * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
    * of values.
    */
   var objectToString = objectProto.toString;
@@ -478,9 +391,6 @@ module.exports = getLength;
   var nativeIsFinite = root.isFinite,
       nativeKeys = Object.keys,
       nativeMax = Math.max;
-
-  /** Detect if properties shadowing those on `Object.prototype` are non-enumerable. */
-  var nonEnumShadows = !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf');
 
   /*------------------------------------------------------------------------*/
 
@@ -502,9 +412,9 @@ module.exports = getLength;
    * Shortcut fusion is an optimization to merge iteratee calls; this avoids
    * the creation of intermediate arrays and can greatly reduce the number of
    * iteratee executions. Sections of a chain sequence qualify for shortcut
-   * fusion if the section is applied to an array of at least two hundred
-   * elements and any iteratees accept only one argument. The heuristic for
-   * whether a section qualifies for shortcut fusion is subject to change.
+   * fusion if the section is applied to an array of at least `200` elements
+   * and any iteratees accept only one argument. The heuristic for whether a
+   * section qualifies for shortcut fusion is subject to change.
    *
    * Chaining is supported in custom builds as long as the `_#value` method is
    * directly or indirectly included in the build.
@@ -556,21 +466,21 @@ module.exports = getLength;
    * `floor`, `forEach`, `forEachRight`, `forIn`, `forInRight`, `forOwn`,
    * `forOwnRight`, `get`, `gt`, `gte`, `has`, `hasIn`, `head`, `identity`,
    * `includes`, `indexOf`, `inRange`, `invoke`, `isArguments`, `isArray`,
-   * `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`, `isBuffer`,
-   * `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`, `isError`,
-   * `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`, `isMatch`,
-   * `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
+   * `isArrayBuffer`, `isArrayLike`, `isArrayLikeObject`, `isBoolean`,
+   * `isBuffer`, `isDate`, `isElement`, `isEmpty`, `isEqual`, `isEqualWith`,
+   * `isError`, `isFinite`, `isFunction`, `isInteger`, `isLength`, `isMap`,
+   * `isMatch`, `isMatchWith`, `isNaN`, `isNative`, `isNil`, `isNull`, `isNumber`,
    * `isObject`, `isObjectLike`, `isPlainObject`, `isRegExp`, `isSafeInteger`,
    * `isSet`, `isString`, `isUndefined`, `isTypedArray`, `isWeakMap`, `isWeakSet`,
    * `join`, `kebabCase`, `last`, `lastIndexOf`, `lowerCase`, `lowerFirst`,
    * `lt`, `lte`, `max`, `maxBy`, `mean`, `meanBy`, `min`, `minBy`, `multiply`,
-   * `noConflict`, `noop`, `now`, `pad`, `padEnd`, `padStart`, `parseInt`,
+   * `noConflict`, `noop`, `now`, `nth`, `pad`, `padEnd`, `padStart`, `parseInt`,
    * `pop`, `random`, `reduce`, `reduceRight`, `repeat`, `result`, `round`,
    * `runInContext`, `sample`, `shift`, `size`, `snakeCase`, `some`, `sortedIndex`,
    * `sortedIndexBy`, `sortedLastIndex`, `sortedLastIndexBy`, `startCase`,
-   * `startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toInteger`,
-   * `toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`, `toString`,
-   * `toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,
+   * `startsWith`, `subtract`, `sum`, `sumBy`, `template`, `times`, `toFinite`,
+   * `toInteger`, `toJSON`, `toLength`, `toLower`, `toNumber`, `toSafeInteger`,
+   * `toString`, `toUpper`, `trim`, `trimEnd`, `trimStart`, `truncate`, `unescape`,
    * `uniqueId`, `upperCase`, `upperFirst`, `value`, and `words`
    *
    * @name _
@@ -717,6 +627,35 @@ module.exports = getLength;
   }
 
   /**
+   * The base implementation of methods like `_.max` and `_.min` which accepts a
+   * `comparator` to determine the extremum value.
+   *
+   * @private
+   * @param {Array} array The array to iterate over.
+   * @param {Function} iteratee The iteratee invoked per iteration.
+   * @param {Function} comparator The comparator used to compare values.
+   * @returns {*} Returns the extremum value.
+   */
+  function baseExtremum(array, iteratee, comparator) {
+    var index = -1,
+        length = array.length;
+
+    while (++index < length) {
+      var value = array[index],
+          current = iteratee(value);
+
+      if (current != null && (computed === undefined
+            ? (current === current && !false)
+            : comparator(current, computed)
+          )) {
+        var computed = current,
+            result = value;
+      }
+    }
+    return result;
+  }
+
+  /**
    * The base implementation of `_.filter` without support for iteratee shorthands.
    *
    * @private
@@ -740,23 +679,24 @@ module.exports = getLength;
    * @private
    * @param {Array} array The array to flatten.
    * @param {number} depth The maximum recursion depth.
-   * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+   * @param {boolean} [predicate=isFlattenable] The function invoked per iteration.
+   * @param {boolean} [isStrict] Restrict to values that pass `predicate` checks.
    * @param {Array} [result=[]] The initial result value.
    * @returns {Array} Returns the new flattened array.
    */
-  function baseFlatten(array, depth, isStrict, result) {
-    result || (result = []);
-
+  function baseFlatten(array, depth, predicate, isStrict, result) {
     var index = -1,
         length = array.length;
 
+    predicate || (predicate = isFlattenable);
+    result || (result = []);
+
     while (++index < length) {
       var value = array[index];
-      if (depth > 0 && isArrayLikeObject(value) &&
-          (isStrict || isArray(value) || isArguments(value))) {
+      if (depth > 0 && predicate(value)) {
         if (depth > 1) {
           // Recursively flatten arrays (susceptible to call stack limits).
-          baseFlatten(value, depth - 1, isStrict, result);
+          baseFlatten(value, depth - 1, predicate, isStrict, result);
         } else {
           arrayPush(result, value);
         }
@@ -769,7 +709,7 @@ module.exports = getLength;
 
   /**
    * The base implementation of `baseForOwn` which iterates over `object`
-   * properties returned by `keysFunc` invoking `iteratee` for each property.
+   * properties returned by `keysFunc` and invokes `iteratee` for each property.
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *
    * @private
@@ -799,12 +739,25 @@ module.exports = getLength;
    * @private
    * @param {Object} object The object to inspect.
    * @param {Array} props The property names to filter.
-   * @returns {Array} Returns the new array of filtered property names.
+   * @returns {Array} Returns the function names.
    */
   function baseFunctions(object, props) {
     return baseFilter(props, function(key) {
       return isFunction(object[key]);
     });
+  }
+
+  /**
+   * The base implementation of `_.gt` which doesn't coerce arguments to numbers.
+   *
+   * @private
+   * @param {*} value The value to compare.
+   * @param {*} other The other value to compare.
+   * @returns {boolean} Returns `true` if `value` is greater than `other`,
+   *  else `false`.
+   */
+  function baseGt(value, other) {
+    return value > other;
   }
 
   /**
@@ -956,6 +909,19 @@ module.exports = getLength;
   }
 
   /**
+   * The base implementation of `_.lt` which doesn't coerce arguments to numbers.
+   *
+   * @private
+   * @param {*} value The value to compare.
+   * @param {*} other The other value to compare.
+   * @returns {boolean} Returns `true` if `value` is less than `other`,
+   *  else `false`.
+   */
+  function baseLt(value, other) {
+    return value < other;
+  }
+
+  /**
    * The base implementation of `_.map` without support for iteratee shorthands.
    *
    * @private
@@ -978,7 +944,7 @@ module.exports = getLength;
    *
    * @private
    * @param {Object} source The object of property values to match.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new spec function.
    */
   function baseMatches(source) {
     var props = keys(source);
@@ -1024,7 +990,7 @@ module.exports = getLength;
    *
    * @private
    * @param {string} key The key of the property to get.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new accessor function.
    */
   function baseProperty(key) {
     return function(object) {
@@ -1111,19 +1077,45 @@ module.exports = getLength;
   }
 
   /**
-   * Copies properties of `source` to `object`.
+   * Compares values to sort them in ascending order.
    *
    * @private
-   * @param {Object} source The object to copy properties from.
-   * @param {Array} props The property identifiers to copy.
-   * @param {Object} [object={}] The object to copy properties to.
-   * @returns {Object} Returns `object`.
+   * @param {*} value The value to compare.
+   * @param {*} other The other value to compare.
+   * @returns {number} Returns the sort order indicator for `value`.
    */
-  var copyObject = copyObjectWith;
+  function compareAscending(value, other) {
+    if (value !== other) {
+      var valIsDefined = value !== undefined,
+          valIsNull = value === null,
+          valIsReflexive = value === value,
+          valIsSymbol = false;
+
+      var othIsDefined = other !== undefined,
+          othIsNull = other === null,
+          othIsReflexive = other === other,
+          othIsSymbol = false;
+
+      if ((!othIsNull && !othIsSymbol && !valIsSymbol && value > other) ||
+          (valIsSymbol && othIsDefined && othIsReflexive && !othIsNull && !othIsSymbol) ||
+          (valIsNull && othIsDefined && othIsReflexive) ||
+          (!valIsDefined && othIsReflexive) ||
+          !valIsReflexive) {
+        return 1;
+      }
+      if ((!valIsNull && !valIsSymbol && !othIsSymbol && value < other) ||
+          (othIsSymbol && valIsDefined && valIsReflexive && !valIsNull && !valIsSymbol) ||
+          (othIsNull && valIsDefined && valIsReflexive) ||
+          (!othIsDefined && valIsReflexive) ||
+          !othIsReflexive) {
+        return -1;
+      }
+    }
+    return 0;
+  }
 
   /**
-   * This function is like `copyObject` except that it accepts a function to
-   * customize copied values.
+   * Copies properties of `source` to `object`.
    *
    * @private
    * @param {Object} source The object to copy properties from.
@@ -1132,7 +1124,7 @@ module.exports = getLength;
    * @param {Function} [customizer] The function to customize copied values.
    * @returns {Object} Returns `object`.
    */
-  function copyObjectWith(source, props, object, customizer) {
+  function copyObject(source, props, object, customizer) {
     object || (object = {});
 
     var index = -1,
@@ -1163,7 +1155,7 @@ module.exports = getLength;
           length = sources.length,
           customizer = length > 1 ? sources[length - 1] : undefined;
 
-      customizer = typeof customizer == 'function'
+      customizer = (assigner.length > 3 && typeof customizer == 'function')
         ? (length--, customizer)
         : undefined;
 
@@ -1241,8 +1233,8 @@ module.exports = getLength;
    */
   function createCtorWrapper(Ctor) {
     return function() {
-      // Use a `switch` statement to work with class constructors.
-      // See http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
+      // Use a `switch` statement to work with class constructors. See
+      // http://ecma-international.org/ecma-262/6.0/#sec-ecmascript-function-objects-call-thisargument-argumentslist
       // for more details.
       var args = arguments;
       var thisBinding = baseCreate(Ctor.prototype),
@@ -1255,9 +1247,8 @@ module.exports = getLength;
   }
 
   /**
-   * Creates a function that wraps `func` to invoke it with the optional `this`
-   * binding of `thisArg` and the `partials` prepended to those provided to
-   * the wrapper.
+   * Creates a function that wraps `func` to invoke it with the `this` binding
+   * of `thisArg` and `partials` prepended to the arguments it receives.
    *
    * @private
    * @param {Function} func The function to wrap.
@@ -1309,16 +1300,16 @@ module.exports = getLength;
    * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
    */
   function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
-    var index = -1,
-        isPartial = bitmask & PARTIAL_COMPARE_FLAG,
-        isUnordered = bitmask & UNORDERED_COMPARE_FLAG,
+    var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
         arrLength = array.length,
         othLength = other.length;
 
     if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
       return false;
     }
-    var result = true;
+    var index = -1,
+        result = true,
+        seen = (bitmask & UNORDERED_COMPARE_FLAG) ? [] : undefined;
 
     // Ignore non-index properties.
     while (++index < arrLength) {
@@ -1334,10 +1325,12 @@ module.exports = getLength;
         break;
       }
       // Recursively compare arrays (susceptible to call stack limits).
-      if (isUnordered) {
-        if (!baseSome(other, function(othValue) {
-              return arrValue === othValue ||
-                equalFunc(arrValue, othValue, customizer, bitmask, stack);
+      if (seen) {
+        if (!baseSome(other, function(othValue, othIndex) {
+              if (!indexOf(seen, othIndex) &&
+                  (arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
+                return seen.push(othIndex);
+              }
             })) {
           result = false;
           break;
@@ -1391,7 +1384,8 @@ module.exports = getLength;
       case regexpTag:
       case stringTag:
         // Coerce regexes to strings and treat strings, primitives and objects,
-        // as equal. See https://es5.github.io/#x15.10.6.4 for more details.
+        // as equal. See http://www.ecma-international.org/ecma-262/6.0/#sec-regexp.prototype.tostring
+        // for more details.
         return object == (other + '');
 
     }
@@ -1494,6 +1488,32 @@ module.exports = getLength;
   }
 
   /**
+   * Checks if `value` is a flattenable `arguments` object or array.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @returns {boolean} Returns `true` if `value` is flattenable, else `false`.
+   */
+  function isFlattenable(value) {
+    return isArray(value) || isArguments(value);
+  }
+
+  /**
+   * Checks if `value` is a valid array-like index.
+   *
+   * @private
+   * @param {*} value The value to check.
+   * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+   * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+   */
+  function isIndex(value, length) {
+    length = length == null ? MAX_SAFE_INTEGER : length;
+    return !!length &&
+      (typeof value == 'number' || reIsUint.test(value)) &&
+      (value > -1 && value % 1 == 0 && value < length);
+  }
+
+  /**
    * Checks if `value` is likely a prototype object.
    *
    * @private
@@ -1506,6 +1526,15 @@ module.exports = getLength;
 
     return value === proto;
   }
+
+  /**
+   * Converts `value` to a string key if it's not a string or symbol.
+   *
+   * @private
+   * @param {*} value The value to inspect.
+   * @returns {string|symbol} Returns the key.
+   */
+  var toKey = String;
 
   /*------------------------------------------------------------------------*/
 
@@ -1552,16 +1581,16 @@ module.exports = getLength;
    */
   function concat() {
     var length = arguments.length,
-        array = castArray(arguments[0]);
+        args = Array(length ? length - 1 : 0),
+        array = arguments[0],
+        index = length;
 
-    if (length < 2) {
-      return length ? copyArray(array) : [];
+    while (index--) {
+      args[index - 1] = arguments[index];
     }
-    var args = Array(length - 1);
-    while (length--) {
-      args[length - 1] = arguments[length];
-    }
-    return arrayConcat(array, baseFlatten(args, 1));
+    return length
+      ? arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, 1))
+      : [];
   }
 
   /**
@@ -1621,14 +1650,14 @@ module.exports = getLength;
    * // => undefined
    */
   function head(array) {
-    return array ? array[0] : undefined;
+    return (array && array.length) ? array[0] : undefined;
   }
 
   /**
    * Gets the index at which the first occurrence of `value` is found in `array`
    * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
-   * for equality comparisons. If `fromIndex` is negative, it's used as the offset
-   * from the end of `array`.
+   * for equality comparisons. If `fromIndex` is negative, it's used as the
+   * offset from the end of `array`.
    *
    * @static
    * @memberOf _
@@ -1906,6 +1935,7 @@ module.exports = getLength;
    * @param {Array|Function|Object|string} [predicate=_.identity]
    *  The function invoked per iteration.
    * @returns {Array} Returns the new filtered array.
+   * @see _.reject
    * @example
    *
    * var users = [
@@ -1973,7 +2003,7 @@ module.exports = getLength;
   }
 
   /**
-   * Iterates over elements of `collection` invoking `iteratee` for each element.
+   * Iterates over elements of `collection` and invokes `iteratee` for each element.
    * The iteratee is invoked with three arguments: (value, index|key, collection).
    * Iteratee functions may exit iteration early by explicitly returning `false`.
    *
@@ -1989,6 +2019,7 @@ module.exports = getLength;
    * @param {Array|Object} collection The collection to iterate over.
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @returns {Array|Object} Returns `collection`.
+   * @see _.forEachRight
    * @example
    *
    * _([1, 2]).forEach(function(value) {
@@ -2006,7 +2037,7 @@ module.exports = getLength;
   }
 
   /**
-   * Creates an array of values by running each element in `collection` through
+   * Creates an array of values by running each element in `collection` thru
    * `iteratee`. The iteratee is invoked with three arguments:
    * (value, index|key, collection).
    *
@@ -2014,10 +2045,10 @@ module.exports = getLength;
    * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
    *
    * The guarded methods are:
-   * `ary`, `curry`, `curryRight`, `drop`, `dropRight`, `every`, `fill`,
-   * `invert`, `parseInt`, `random`, `range`, `rangeRight`, `slice`, `some`,
-   * `sortBy`, `take`, `takeRight`, `template`, `trim`, `trimEnd`, `trimStart`,
-   * and `words`
+   * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
+   * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
+   * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
+   * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
    *
    * @static
    * @memberOf _
@@ -2054,9 +2085,9 @@ module.exports = getLength;
 
   /**
    * Reduces `collection` to a value which is the accumulated result of running
-   * each element in `collection` through `iteratee`, where each successive
+   * each element in `collection` thru `iteratee`, where each successive
    * invocation is supplied the return value of the previous. If `accumulator`
-   * is not given the first element of `collection` is used as the initial
+   * is not given, the first element of `collection` is used as the initial
    * value. The iteratee is invoked with four arguments:
    * (accumulator, value, index|key, collection).
    *
@@ -2075,6 +2106,7 @@ module.exports = getLength;
    * @param {Function} [iteratee=_.identity] The function invoked per iteration.
    * @param {*} [accumulator] The initial value.
    * @returns {*} Returns the accumulated value.
+   * @see _.reduceRight
    * @example
    *
    * _.reduce([1, 2], function(sum, n) {
@@ -2165,7 +2197,7 @@ module.exports = getLength;
 
   /**
    * Creates an array of elements, sorted in ascending order by the results of
-   * running each element in a collection through each iteratee. This method
+   * running each element in a collection thru each iteratee. This method
    * performs a stable sort, that is, it preserves the original sort order of
    * equal elements. The iteratees are invoked with one argument: (value).
    *
@@ -2175,8 +2207,7 @@ module.exports = getLength;
    * @category Collection
    * @param {Array|Object} collection The collection to iterate over.
    * @param {...(Array|Array[]|Function|Function[]|Object|Object[]|string|string[])}
-   *  [iteratees=[_.identity]] The iteratees to sort by, specified individually
-   *  or in arrays.
+   *  [iteratees=[_.identity]] The iteratees to sort by.
    * @returns {Array} Returns the new sorted array.
    * @example
    *
@@ -2247,8 +2278,7 @@ module.exports = getLength;
 
   /**
    * Creates a function that invokes `func` with the `this` binding of `thisArg`
-   * and prepends any additional `_.bind` arguments to those provided to the
-   * bound function.
+   * and `partials` prepended to the arguments it receives.
    *
    * The `_.bind.placeholder` value, which defaults to `_` in monolithic builds,
    * may be used as a placeholder for partially applied arguments.
@@ -2340,7 +2370,7 @@ module.exports = getLength;
    * @since 3.0.0
    * @category Function
    * @param {Function} predicate The predicate to negate.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new negated function.
    * @example
    *
    * function isEven(n) {
@@ -2433,47 +2463,6 @@ module.exports = getLength;
   /*------------------------------------------------------------------------*/
 
   /**
-   * Casts `value` as an array if it's not one.
-   *
-   * @static
-   * @memberOf _
-   * @since 4.4.0
-   * @category Lang
-   * @param {*} value The value to inspect.
-   * @returns {Array} Returns the cast array.
-   * @example
-   *
-   * _.castArray(1);
-   * // => [1]
-   *
-   * _.castArray({ 'a': 1 });
-   * // => [{ 'a': 1 }]
-   *
-   * _.castArray('abc');
-   * // => ['abc']
-   *
-   * _.castArray(null);
-   * // => [null]
-   *
-   * _.castArray(undefined);
-   * // => [undefined]
-   *
-   * _.castArray();
-   * // => []
-   *
-   * var array = [1, 2, 3];
-   * console.log(_.castArray(array) === array);
-   * // => true
-   */
-  function castArray() {
-    if (!arguments.length) {
-      return [];
-    }
-    var value = arguments[0];
-    return isArray(value) ? value : [value];
-  }
-
-  /**
    * Creates a shallow clone of `value`.
    *
    * **Note:** This method is loosely based on the
@@ -2490,6 +2479,7 @@ module.exports = getLength;
    * @category Lang
    * @param {*} value The value to clone.
    * @returns {*} Returns the cloned value.
+   * @see _.cloneDeep
    * @example
    *
    * var objects = [{ 'a': 1 }, { 'b': 2 }];
@@ -2539,32 +2529,6 @@ module.exports = getLength;
    */
   function eq(value, other) {
     return value === other || (value !== value && other !== other);
-  }
-
-  /**
-   * Checks if `value` is greater than `other`.
-   *
-   * @static
-   * @memberOf _
-   * @since 3.9.0
-   * @category Lang
-   * @param {*} value The value to compare.
-   * @param {*} other The other value to compare.
-   * @returns {boolean} Returns `true` if `value` is greater than `other`,
-   *  else `false`.
-   * @example
-   *
-   * _.gt(3, 1);
-   * // => true
-   *
-   * _.gt(3, 3);
-   * // => false
-   *
-   * _.gt(1, 3);
-   * // => false
-   */
-  function gt(value, other) {
-    return value > other;
   }
 
   /**
@@ -2760,12 +2724,7 @@ module.exports = getLength;
           isFunction(value.splice) || isArguments(value))) {
       return !value.length;
     }
-    for (var key in value) {
-      if (hasOwnProperty.call(value, key)) {
-        return false;
-      }
-    }
-    return !(nonEnumShadows && keys(value).length);
+    return !keys(value).length;
   }
 
   /**
@@ -2819,13 +2778,13 @@ module.exports = getLength;
    * _.isFinite(3);
    * // => true
    *
-   * _.isFinite(Number.MAX_VALUE);
-   * // => true
-   *
-   * _.isFinite(3.14);
+   * _.isFinite(Number.MIN_VALUE);
    * // => true
    *
    * _.isFinite(Infinity);
+   * // => false
+   *
+   * _.isFinite('3');
    * // => false
    */
   function isFinite(value) {
@@ -2891,8 +2850,9 @@ module.exports = getLength;
   }
 
   /**
-   * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-   * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+   * Checks if `value` is the
+   * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+   * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
    *
    * @static
    * @memberOf _
@@ -2950,9 +2910,10 @@ module.exports = getLength;
   /**
    * Checks if `value` is `NaN`.
    *
-   * **Note:** This method is not the same as
-   * [`isNaN`](https://es5.github.io/#x15.1.2.4) which returns `true` for
-   * `undefined` and other non-numeric values.
+   * **Note:** This method is based on
+   * [`Number.isNaN`](https://mdn.io/Number/isNaN) and is not the same as
+   * global [`isNaN`](https://mdn.io/isNaN) which returns `true` for
+   * `undefined` and other non-number values.
    *
    * @static
    * @memberOf _
@@ -3101,32 +3062,6 @@ module.exports = getLength;
   }
 
   /**
-   * Checks if `value` is less than `other`.
-   *
-   * @static
-   * @memberOf _
-   * @since 3.9.0
-   * @category Lang
-   * @param {*} value The value to compare.
-   * @param {*} other The other value to compare.
-   * @returns {boolean} Returns `true` if `value` is less than `other`,
-   *  else `false`.
-   * @example
-   *
-   * _.lt(1, 3);
-   * // => true
-   *
-   * _.lt(3, 3);
-   * // => false
-   *
-   * _.lt(3, 1);
-   * // => false
-   */
-  function lt(value, other) {
-    return value < other;
-  }
-
-  /**
    * Converts `value` to an array.
    *
    * @static
@@ -3170,7 +3105,7 @@ module.exports = getLength;
    * @returns {number} Returns the converted integer.
    * @example
    *
-   * _.toInteger(3);
+   * _.toInteger(3.2);
    * // => 3
    *
    * _.toInteger(Number.MIN_VALUE);
@@ -3179,7 +3114,7 @@ module.exports = getLength;
    * _.toInteger(Infinity);
    * // => 1.7976931348623157e+308
    *
-   * _.toInteger('3');
+   * _.toInteger('3.2');
    * // => 3
    */
   var toInteger = Number;
@@ -3195,8 +3130,8 @@ module.exports = getLength;
    * @returns {number} Returns the number.
    * @example
    *
-   * _.toNumber(3);
-   * // => 3
+   * _.toNumber(3.2);
+   * // => 3.2
    *
    * _.toNumber(Number.MIN_VALUE);
    * // => 5e-324
@@ -3204,14 +3139,14 @@ module.exports = getLength;
    * _.toNumber(Infinity);
    * // => Infinity
    *
-   * _.toNumber('3');
-   * // => 3
+   * _.toNumber('3.2');
+   * // => 3.2
    */
   var toNumber = Number;
 
   /**
-   * Converts `value` to a string if it's not one. An empty string is returned
-   * for `null` and `undefined` values. The sign of `-0` is preserved.
+   * Converts `value` to a string. An empty string is returned for `null`
+   * and `undefined` values. The sign of `-0` is preserved.
    *
    * @static
    * @memberOf _
@@ -3254,6 +3189,7 @@ module.exports = getLength;
    * @param {Object} object The destination object.
    * @param {...Object} [sources] The source objects.
    * @returns {Object} Returns `object`.
+   * @see _.assignIn
    * @example
    *
    * function Foo() {
@@ -3288,6 +3224,7 @@ module.exports = getLength;
    * @param {Object} object The destination object.
    * @param {...Object} [sources] The source objects.
    * @returns {Object} Returns `object`.
+   * @see _.assign
    * @example
    *
    * function Foo() {
@@ -3311,7 +3248,7 @@ module.exports = getLength;
   /**
    * This method is like `_.assignIn` except that it accepts `customizer`
    * which is invoked to produce the assigned values. If `customizer` returns
-   * `undefined` assignment is handled by the method instead. The `customizer`
+   * `undefined`, assignment is handled by the method instead. The `customizer`
    * is invoked with five arguments: (objValue, srcValue, key, object, source).
    *
    * **Note:** This method mutates `object`.
@@ -3325,6 +3262,7 @@ module.exports = getLength;
    * @param {...Object} sources The source objects.
    * @param {Function} [customizer] The function to customize assigned values.
    * @returns {Object} Returns `object`.
+   * @see _.assignWith
    * @example
    *
    * function customizer(objValue, srcValue) {
@@ -3337,12 +3275,12 @@ module.exports = getLength;
    * // => { 'a': 1, 'b': 2 }
    */
   var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
-    copyObjectWith(source, keysIn(source), object, customizer);
+    copyObject(source, keysIn(source), object, customizer);
   });
 
   /**
    * Creates an object that inherits from the `prototype` object. If a
-   * `properties` object is given its own enumerable string keyed properties
+   * `properties` object is given, its own enumerable string keyed properties
    * are assigned to the created object.
    *
    * @static
@@ -3394,6 +3332,7 @@ module.exports = getLength;
    * @param {Object} object The destination object.
    * @param {...Object} [sources] The source objects.
    * @returns {Object} Returns `object`.
+   * @see _.defaultsDeep
    * @example
    *
    * _.defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
@@ -3416,16 +3355,16 @@ module.exports = getLength;
    * @returns {boolean} Returns `true` if `path` exists, else `false`.
    * @example
    *
-   * var object = { 'a': { 'b': { 'c': 3 } } };
-   * var other = _.create({ 'a': _.create({ 'b': _.create({ 'c': 3 }) }) });
+   * var object = { 'a': { 'b': 2 } };
+   * var other = _.create({ 'a': _.create({ 'b': 2 }) });
    *
    * _.has(object, 'a');
    * // => true
    *
-   * _.has(object, 'a.b.c');
+   * _.has(object, 'a.b');
    * // => true
    *
-   * _.has(object, ['a', 'b', 'c']);
+   * _.has(object, ['a', 'b']);
    * // => true
    *
    * _.has(other, 'a');
@@ -3534,8 +3473,7 @@ module.exports = getLength;
    * @memberOf _
    * @category Object
    * @param {Object} object The source object.
-   * @param {...(string|string[])} [props] The property identifiers to pick,
-   *  specified individually or in arrays.
+   * @param {...(string|string[])} [props] The property identifiers to pick.
    * @returns {Object} Returns the new object.
    * @example
    *
@@ -3545,7 +3483,7 @@ module.exports = getLength;
    * // => { 'a': 1, 'c': 3 }
    */
   var pick = rest(function(object, props) {
-    return object == null ? {} : basePick(object, baseFlatten(props, 1));
+    return object == null ? {} : basePick(object, baseMap(baseFlatten(props, 1), toKey));
   });
 
   /**
@@ -3682,8 +3620,8 @@ module.exports = getLength;
 
   /**
    * Creates a function that invokes `func` with the arguments of the created
-   * function. If `func` is a property name the created function returns the
-   * property value for a given element. If `func` is an array or object the
+   * function. If `func` is a property name, the created function returns the
+   * property value for a given element. If `func` is an array or object, the
    * created function returns `true` for elements that contain the equivalent
    * source properties, otherwise it returns `false`.
    *
@@ -3737,7 +3675,7 @@ module.exports = getLength;
    * @since 3.0.0
    * @category Util
    * @param {Object} source The object of property values to match.
-   * @returns {Function} Returns the new function.
+   * @returns {Function} Returns the new spec function.
    * @example
    *
    * var users = [
@@ -3754,7 +3692,7 @@ module.exports = getLength;
 
   /**
    * Adds all own enumerable string keyed function properties of a source
-   * object to the destination object. If `object` is a function then methods
+   * object to the destination object. If `object` is a function, then methods
    * are added to its prototype as well.
    *
    * **Note:** Use `_.runInContext` to create a pristine `lodash` function to
@@ -3799,7 +3737,7 @@ module.exports = getLength;
       object = this;
       methodNames = baseFunctions(source, keys(source));
     }
-    var chain = (isObject(options) && 'chain' in options) ? options.chain : true,
+    var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
         isFunc = isFunction(object);
 
     baseEach(methodNames, function(methodName) {
@@ -3864,7 +3802,7 @@ module.exports = getLength;
   }
 
   /**
-   * Generates a unique ID. If `prefix` is given the ID is appended to it.
+   * Generates a unique ID. If `prefix` is given, the ID is appended to it.
    *
    * @static
    * @since 0.1.0
@@ -3888,7 +3826,7 @@ module.exports = getLength;
   /*------------------------------------------------------------------------*/
 
   /**
-   * Computes the maximum value of `array`. If `array` is empty or falsey
+   * Computes the maximum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static
@@ -3907,12 +3845,12 @@ module.exports = getLength;
    */
   function max(array) {
     return (array && array.length)
-      ? baseExtremum(array, identity, gt)
+      ? baseExtremum(array, identity, baseGt)
       : undefined;
   }
 
   /**
-   * Computes the minimum value of `array`. If `array` is empty or falsey
+   * Computes the minimum value of `array`. If `array` is empty or falsey,
    * `undefined` is returned.
    *
    * @static
@@ -3931,7 +3869,7 @@ module.exports = getLength;
    */
   function min(array) {
     return (array && array.length)
-      ? baseExtremum(array, identity, lt)
+      ? baseExtremum(array, identity, baseLt)
       : undefined;
   }
 
@@ -4058,9 +3996,11 @@ module.exports = getLength;
 
   /*--------------------------------------------------------------------------*/
 
-  // Expose lodash on the free variable `window` or `self` when available. This
-  // prevents errors in cases where lodash is loaded by a script tag in the presence
-  // of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch for more details.
+  // Expose Lodash on the free variable `window` or `self` when available so it's
+  // globally accessible, even when bundled with Browserify, Webpack, etc. This
+  // also prevents errors in cases where Lodash is loaded by a script tag in the
+  // presence of an AMD loader. See http://requirejs.org/docs/errors.html#mismatch
+  // for more details. Use `_.noConflict` to remove Lodash from the global object.
   (freeWindow || freeSelf || {})._ = lodash;
 
   // Some AMD build optimizers like r.js check for condition patterns like the following:
@@ -4134,7 +4074,8 @@ var funcTag = '[object Function]',
 var objectProto = Object.prototype;
 
 /**
- * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
  * of values.
  */
 var objectToString = objectProto.toString;
@@ -4207,8 +4148,9 @@ module.exports = isLength;
 
 },{}],9:[function(require,module,exports){
 /**
- * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
- * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
  *
  * @static
  * @memberOf _
@@ -4251,7 +4193,7 @@ module.exports = isObject;
  */
 var ARS = {};
 
-var Mini = require('../mini');
+var Mini = require('../../../mini');
 var H = require('./shims');
 
 ARS.modules = {};
@@ -4344,7 +4286,7 @@ ARS.wrapperGen = function(identifier) {
 };
 
 module.exports = ARS;
-},{"../mini":2,"./shims":21}],11:[function(require,module,exports){
+},{"../../../mini":2,"./shims":21}],11:[function(require,module,exports){
 var A = {};
 
 /**
@@ -4464,6 +4406,7 @@ A.readFloat32 = function(byteView, offset, littleEndian) {
 };
 
 module.exports = A;
+
 },{}],12:[function(require,module,exports){
 var C = require('./detect');
 
@@ -4499,6 +4442,7 @@ C.callCef = function(req, persistent, onsuccess, onfailure) {
 };
 
 module.exports = C;
+
 },{"./detect":14}],13:[function(require,module,exports){
 var _ = require('lodash/core');
 
@@ -4616,6 +4560,7 @@ C.clearTimer = function(timer) {
 };
 
 module.exports = C;
+
 },{"./abstractresultset":10,"./arraybuffer":11,"./cef_interactions":12,"./detect":14,"./event":15,"./math":17,"./object":18,"./raf":19,"./resultset":20,"./shims":21,"./stacktrace":22,"./storage":23,"./testers":24,"./urlutils":25,"./uuid":26,"lodash/core":5}],14:[function(require,module,exports){
 /*
  * Env Detection Module
@@ -4807,6 +4752,7 @@ C.isWebGLSupported = function () {
 C.language = C.isNodejs ? "" : (navigator.language || navigator['browserLanguage'] || "").toLowerCase();
 
 module.exports = C;
+
 },{"lodash/isArrayLike":6}],15:[function(require,module,exports){
 /*
  * Custom Event Manipulation Module
@@ -4937,12 +4883,13 @@ E.EventDispatcher = function() {
 };
 
 module.exports = E;
+
 },{"./iterator":16,"./uuid":26}],16:[function(require,module,exports){
 /*
  * Iterator Logic Module
  */
 var C = require('lodash/core');
-var Mini = require('../mini');
+var Mini = require('../../../mini');
 var E = require('./stacktrace');
 var D = require('./detect');
 
@@ -5151,13 +5098,13 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../mini":2,"./detect":14,"./stacktrace":22,"lodash/core":5}],17:[function(require,module,exports){
+},{"../../../mini":2,"./detect":14,"./stacktrace":22,"lodash/core":5}],17:[function(require,module,exports){
 /*
  * Math-Related Module
  */
 
 var Ms = {};
-var C = require('../mini');
+var C = require('../../../mini');
 var H = require('./stacktrace');
 
 /**
@@ -5438,7 +5385,7 @@ Ms.distOnEarth = function(p0, p1) {
 };
 
 module.exports = Ms;
-},{"../mini":2,"./stacktrace":22}],18:[function(require,module,exports){
+},{"../../../mini":2,"./stacktrace":22}],18:[function(require,module,exports){
 /*
  * Object-Related Module
  */
@@ -5501,6 +5448,7 @@ O.cloneByParse = function(obj) {
 };
 
 module.exports = O;
+
 },{"./stacktrace":22}],19:[function(require,module,exports){
 var root = require('./detect').root;
 
@@ -5514,6 +5462,7 @@ root.requestAnimationFrame = (function() {
             return root.setTimeout(callback, 1000 / 60);
         };
 })();
+
 },{"./detect":14}],20:[function(require,module,exports){
 /*
  * ResultSet Module
@@ -5700,6 +5649,7 @@ RS.wrap = wrap;
 RS.fastWrap = wrap;
 
 module.exports = RS;
+
 },{"./abstractresultset":10,"./iterator":16,"lodash/core":5}],21:[function(require,module,exports){
 var S = {};
 
@@ -5835,10 +5785,11 @@ S.createObject = createObject;
 S.noop = function() {};
 
 module.exports = S;
+
 },{"./detect":14}],22:[function(require,module,exports){
 var C = {};
 
-var Mini = require('../mini');
+var Mini = require('../../../mini');
 
 function stack() {
     this.stacks = [];
@@ -6003,7 +5954,7 @@ Error.prototype.getStackTrace = C.getStackTrace;
 Error.prototype.printStackTrace = printStackTrace;
 
 module.exports = C;
-},{"../mini":2}],23:[function(require,module,exports){
+},{"../../../mini":2}],23:[function(require,module,exports){
 var C = {};
 var H = require('./stacktrace');
 var Detect = require('./detect');
@@ -6114,6 +6065,7 @@ function removeItemFallback(key) {
 }
 
 module.exports = C;
+
 },{"./detect":14,"./stacktrace":22}],24:[function(require,module,exports){
 var C = {};
 
@@ -6200,6 +6152,7 @@ C.profileTimes = function(cb, times, title) {
 };
 
 module.exports = C;
+
 },{}],25:[function(require,module,exports){
 var C = {};
 
@@ -6292,6 +6245,7 @@ C.param = function(data) {
 };
 
 module.exports = C;
+
 },{"./detect":14,"./iterator":16}],26:[function(require,module,exports){
 var C = {};
 
@@ -6356,4 +6310,5 @@ C.fastUuid = function() {
 };
 
 module.exports = C;
+
 },{}]},{},[1]);

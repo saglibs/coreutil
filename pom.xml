@@ -21,8 +21,35 @@
                 <directory>src/main/javascript</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <workingDirectory>.</workingDirectory>
+                    <installDirectory>target</installDirectory>
+                    <nodeVersion>v5.3.0</nodeVersion>
+                    <npmVersion>3.3.12</npmVersion>
+                    <downloadRoot>https://nodejs.org/dist/</downloadRoot>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>gulp build</id>
+                        <goals>
+                            <goal>gulp</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
