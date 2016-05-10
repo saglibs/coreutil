@@ -4794,8 +4794,8 @@ C.isWebGLSupported = function () {
     return root.hasOwnProperty("__gl") ? root.__gl : root.__gl = !!(root['WebGLRenderingContext'] && canvas.getContext('webgl'));
 };
 
-C.isCanvasSupported();
-C.isWebGLSupported();
+// C.isCanvasSupported();
+// C.isWebGLSupported();
 
 /**
  * Language string
@@ -5923,9 +5923,11 @@ C.getStackTrace = function(title) {
     if (split.length > 1) {
         var t = split[0];
         //remove getStackTrace itself
-        split.shift();
-        split.shift();
-        split.unshift(t);
+        if (t.indexOf("getStackTrace") !== -1) {
+            split.shift();
+            split.shift();
+            split.unshift(t);
+        }
         // split.unshift(callstack);
         return split.join('\n');
     }
