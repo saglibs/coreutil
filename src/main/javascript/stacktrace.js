@@ -1,6 +1,6 @@
 var C = {};
 
-var Mini = require('../mini');
+var Mini = require('../../../mini');
 
 function stack() {
     this.stacks = [];

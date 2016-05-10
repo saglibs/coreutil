@@ -2,7 +2,7 @@ var H = require('../core');
 /*
  * ResultSet Test
  */
-var ARS = require('../src/abstractresultset');
+var ARS = require('../src/main/javascript/abstractresultset');
 
 ARS.registerChannel('__isRS__', [Array.prototype, Object.prototype], function(val) {
     if (val instanceof Array || val instanceof Object) {
@@ -29,7 +29,7 @@ console.log(obj.toArray());
 /*
  * ResultSet Test
  */
-var RS = require('../src/resultset');
+var RS = require('../src/main/javascript/resultset');
 
 RS.wrap({a: 1, b: 2}).each(function(v, k) {
     console.log(k);
@@ -39,7 +39,7 @@ RS.wrap({a: 1, b: 2}).each(function(v, k) {
 /*
  * Iterator Test
  */
-var I = require('../src/iterator');
+var I = require('../src/main/javascript/iterator');
 
 I.each([1,2,3], function(i) {
     console.log(i);

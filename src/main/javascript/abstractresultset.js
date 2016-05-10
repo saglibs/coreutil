@@ -11,7 +11,7 @@
  */
 var ARS = {};
 
-var Mini = require('../mini');
+var Mini = require('../../../mini');
 var H = require('./shims');
 
 ARS.modules = {};

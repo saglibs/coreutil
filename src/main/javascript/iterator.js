@@ -2,7 +2,7 @@
  * Iterator Logic Module
  */
 var C = require('lodash/core');
-var Mini = require('../mini');
+var Mini = require('../../../mini');
 var E = require('./stacktrace');
 var D = require('./detect');
 
