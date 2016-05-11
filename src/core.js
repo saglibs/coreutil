@@ -17,6 +17,7 @@ var Events = require('./event');
 var Shims = require('./shims');
 var ARS = require('./abstractresultset');
 var RS = require('./resultset');
+var Func = require('./func');
 
 var C = {};
 
@@ -37,6 +38,7 @@ _.extend(C, Events);
 // _.extend(C, Iterator);
 _.extend(C, Shims);
 _.extend(C, RS);
+_.extend(C, Func);
 
 C.abstraceResultSet = ARS;
 

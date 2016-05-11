@@ -6,7 +6,7 @@ Core.extend(Core, require('./src/iterator'));
 Core.root[Core.__name] = Core;
 
 module.exports = Core;
-},{"./src/core":14,"./src/iterator":18}],2:[function(require,module,exports){
+},{"./src/core":14,"./src/iterator":19}],2:[function(require,module,exports){
 /*
  * MiniCore module
  *
@@ -20532,7 +20532,7 @@ ARS.wrapperGen = function(identifier) {
 };
 
 module.exports = ARS;
-},{"../mini":2,"./shims":23}],12:[function(require,module,exports){
+},{"../mini":2,"./shims":24}],12:[function(require,module,exports){
 var A = {};
 
 /**
@@ -20709,6 +20709,7 @@ var Events = require('./event');
 var Shims = require('./shims');
 var ARS = require('./abstractresultset');
 var RS = require('./resultset');
+var Func = require('./func');
 
 var C = {};
 
@@ -20729,6 +20730,7 @@ _.extend(C, Events);
 // _.extend(C, Iterator);
 _.extend(C, Shims);
 _.extend(C, RS);
+_.extend(C, Func);
 
 C.abstraceResultSet = ARS;
 
@@ -20807,7 +20809,7 @@ C.clearTimer = function(timer) {
 
 module.exports = C;
 
-},{"./abstractresultset":11,"./arraybuffer":12,"./cef_interactions":13,"./detect":15,"./event":17,"./math":19,"./object":20,"./raf":21,"./resultset":22,"./shims":23,"./stacktrace":24,"./storage":25,"./testers":26,"./urlutils":27,"./uuid":28,"lodash/core":5}],15:[function(require,module,exports){
+},{"./abstractresultset":11,"./arraybuffer":12,"./cef_interactions":13,"./detect":15,"./event":17,"./func":18,"./math":20,"./object":21,"./raf":22,"./resultset":23,"./shims":24,"./stacktrace":25,"./storage":26,"./testers":27,"./urlutils":28,"./uuid":29,"lodash/core":5}],15:[function(require,module,exports){
 /*
  * Env Detection Module
  */
@@ -21727,7 +21729,71 @@ E.EventDispatcher = function() {
 
 module.exports = E;
 
-},{"./iterator":18,"./uuid":28}],18:[function(require,module,exports){
+},{"./iterator":19,"./uuid":29}],18:[function(require,module,exports){
+var C = {};
+
+//shims
+C.throttle = function(func, wait, options) {
+    var context, args, result;
+    var timeout = null;
+    var previous = 0;
+    if (!options) options = {};
+    var later = function() {
+        previous = options.leading === false ? 0 : Date.now();
+        timeout = null;
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+    };
+    return function() {
+        var now = Date.now();
+        if (!previous && options.leading === false) previous = now;
+        var remaining = wait - (now - previous);
+        context = this;
+        args = arguments;
+        if (remaining <= 0 || remaining > wait) {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            previous = now;
+            result = func.apply(context, args);
+            if (!timeout) context = args = null;
+        } else if (!timeout && options.trailing !== false) {
+            timeout = setTimeout(later, remaining);
+        }
+        return result;
+    };
+};
+
+var after = function() {};
+
+!(function() {
+    var _funcs = {};
+    after = function(func, times) {
+        if (!(times > 0) && !(times < 0) && !(times === 0)) times = 1;
+        if (!_funcs[func]) {
+            _funcs[func] = times;
+        }
+        return function() {
+            _funcs[func]--;
+            if (_funcs[func] !== undefined && _funcs[func] <= 0) {
+                _funcs[func] = undefined;
+                return func();
+            }
+        };
+    }
+})();
+
+C.after = after;
+
+C.safeFunc = function(func) {
+    return function() {
+        if (func) return func.apply(this, arguments);
+    };
+};
+
+module.exports = C;
+},{}],19:[function(require,module,exports){
 /*
  * Iterator Logic Module
  */
@@ -21941,7 +22007,7 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../mini":2,"./detect":15,"./stacktrace":24,"lodash/core":5}],19:[function(require,module,exports){
+},{"../mini":2,"./detect":15,"./stacktrace":25,"lodash/core":5}],20:[function(require,module,exports){
 /*
  * Math-Related Module
  */
@@ -22228,7 +22294,7 @@ Ms.distOnEarth = function(p0, p1) {
 };
 
 module.exports = Ms;
-},{"../mini":2,"./stacktrace":24}],20:[function(require,module,exports){
+},{"../mini":2,"./stacktrace":25}],21:[function(require,module,exports){
 /*
  * Object-Related Module
  */
@@ -22292,7 +22358,7 @@ O.cloneByParse = function(obj) {
 
 module.exports = O;
 
-},{"./stacktrace":24}],21:[function(require,module,exports){
+},{"./stacktrace":25}],22:[function(require,module,exports){
 var root = require('./detect').root;
 
 root.requestAnimationFrame = (function() {
@@ -22306,7 +22372,7 @@ root.requestAnimationFrame = (function() {
         };
 })();
 
-},{"./detect":15}],22:[function(require,module,exports){
+},{"./detect":15}],23:[function(require,module,exports){
 /*
  * ResultSet Module
  */
@@ -22493,7 +22559,7 @@ RS.fastWrap = wrap;
 
 module.exports = RS;
 
-},{"./abstractresultset":11,"./iterator":18,"lodash/core":5}],23:[function(require,module,exports){
+},{"./abstractresultset":11,"./iterator":19,"lodash/core":5}],24:[function(require,module,exports){
 var S = {};
 
 var H = require('./detect');
@@ -22629,7 +22695,7 @@ S.noop = function() {};
 
 module.exports = S;
 
-},{"./detect":15}],24:[function(require,module,exports){
+},{"./detect":15}],25:[function(require,module,exports){
 var C = {};
 
 var Mini = require('../mini');
@@ -22797,7 +22863,7 @@ Error.prototype.getStackTrace = C.getStackTrace;
 Error.prototype.printStackTrace = printStackTrace;
 
 module.exports = C;
-},{"../mini":2}],25:[function(require,module,exports){
+},{"../mini":2}],26:[function(require,module,exports){
 var C = {};
 var H = require('./stacktrace');
 var Detect = require('./detect');
@@ -22909,7 +22975,7 @@ function removeItemFallback(key) {
 
 module.exports = C;
 
-},{"./detect":15,"./stacktrace":24}],26:[function(require,module,exports){
+},{"./detect":15,"./stacktrace":25}],27:[function(require,module,exports){
 var C = {};
 
 C.now = Date.now;
@@ -22996,7 +23062,7 @@ C.profileTimes = function(cb, times, title) {
 
 module.exports = C;
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var C = {};
 
 var I = require('./iterator');
@@ -23089,7 +23155,7 @@ C.param = function(data) {
 
 module.exports = C;
 
-},{"./detect":15,"./iterator":18}],28:[function(require,module,exports){
+},{"./detect":15,"./iterator":19}],29:[function(require,module,exports){
 var C = {};
 
 /**
@@ -23154,7 +23220,7 @@ C.fastUuid = function() {
 
 module.exports = C;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /*
  * Core Module Interface
  */
@@ -23176,4 +23242,4 @@ _.extend(_, Encodings);
 Core.root[Core.__name] = _;
 
 module.exports = _;
-},{"./core":1,"./src/encoding":16,"lodash":10}]},{},[29]);
+},{"./core":1,"./src/encoding":16,"lodash":10}]},{},[30]);
