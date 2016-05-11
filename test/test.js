@@ -29,7 +29,7 @@ console.log(obj.toArray());
 /*
  * ResultSet Test
  */
-var RS = require('../src/main/javascript/resultset');
+var RS = require('../src/resultset');
 
 RS.wrap({a: 1, b: 2}).each(function(v, k) {
     console.log(k);
@@ -39,7 +39,7 @@ RS.wrap({a: 1, b: 2}).each(function(v, k) {
 /*
  * Iterator Test
  */
-var I = require('../src/main/javascript/iterator');
+var I = require('../src/iterator');
 
 I.each([1,2,3], function(i) {
     console.log(i);
