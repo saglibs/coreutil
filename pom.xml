@@ -36,6 +36,7 @@
                 <directory>${project.basedir}</directory>
                 <includes>
                     <include>**/*.js</include>
+                    <include>package.json</include>
                 </includes>
                 <excludes>
                     <exclude>src/**/*.js</exclude>
