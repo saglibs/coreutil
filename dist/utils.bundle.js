@@ -1,12 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Core = require('./src/main/javascript/core');
+var Core = require('./src/core');
 
-Core.extend(Core, require('./src/main/javascript/iterator'));
+Core.extend(Core, require('./src/iterator'));
 
 Core.root[Core.__name] = Core;
 
 module.exports = Core;
-},{"./src/main/javascript/core":14,"./src/main/javascript/iterator":18}],2:[function(require,module,exports){
+},{"./src/core":14,"./src/iterator":18}],2:[function(require,module,exports){
 /*
  * MiniCore module
  *
@@ -20439,7 +20439,7 @@ module.exports = isObject;
  */
 var ARS = {};
 
-var Mini = require('../../../mini');
+var Mini = require('../mini');
 var H = require('./shims');
 
 ARS.modules = {};
@@ -20532,7 +20532,7 @@ ARS.wrapperGen = function(identifier) {
 };
 
 module.exports = ARS;
-},{"../../../mini":2,"./shims":23}],12:[function(require,module,exports){
+},{"../mini":2,"./shims":23}],12:[function(require,module,exports){
 var A = {};
 
 /**
@@ -21732,7 +21732,7 @@ module.exports = E;
  * Iterator Logic Module
  */
 var C = require('lodash/core');
-var Mini = require('../../../mini');
+var Mini = require('../mini');
 var E = require('./stacktrace');
 var D = require('./detect');
 
@@ -21941,13 +21941,13 @@ I.filter = function(ele, fn) {
 };
 
 module.exports = I;
-},{"../../../mini":2,"./detect":15,"./stacktrace":24,"lodash/core":5}],19:[function(require,module,exports){
+},{"../mini":2,"./detect":15,"./stacktrace":24,"lodash/core":5}],19:[function(require,module,exports){
 /*
  * Math-Related Module
  */
 
 var Ms = {};
-var C = require('../../../mini');
+var C = require('../mini');
 var H = require('./stacktrace');
 
 /**
@@ -22228,7 +22228,7 @@ Ms.distOnEarth = function(p0, p1) {
 };
 
 module.exports = Ms;
-},{"../../../mini":2,"./stacktrace":24}],20:[function(require,module,exports){
+},{"../mini":2,"./stacktrace":24}],20:[function(require,module,exports){
 /*
  * Object-Related Module
  */
@@ -22632,7 +22632,7 @@ module.exports = S;
 },{"./detect":15}],24:[function(require,module,exports){
 var C = {};
 
-var Mini = require('../../../mini');
+var Mini = require('../mini');
 
 function stack() {
     this.stacks = [];
@@ -22797,7 +22797,7 @@ Error.prototype.getStackTrace = C.getStackTrace;
 Error.prototype.printStackTrace = printStackTrace;
 
 module.exports = C;
-},{"../../../mini":2}],25:[function(require,module,exports){
+},{"../mini":2}],25:[function(require,module,exports){
 var C = {};
 var H = require('./stacktrace');
 var Detect = require('./detect');
@@ -23161,7 +23161,7 @@ module.exports = C;
 var Core = require('./core');
 
 var _ = require('lodash');
-var Encodings = require('./src/main/javascript/encoding');
+var Encodings = require('./src/encoding');
 
 _.extend(_, Core);
 _.extend(_, Encodings);
@@ -23176,4 +23176,4 @@ _.extend(_, Encodings);
 Core.root[Core.__name] = _;
 
 module.exports = _;
-},{"./core":1,"./src/main/javascript/encoding":16,"lodash":10}]},{},[29]);
+},{"./core":1,"./src/encoding":16,"lodash":10}]},{},[29]);

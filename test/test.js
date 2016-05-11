@@ -2,7 +2,7 @@ var H = require('../core');
 /*
  * ResultSet Test
  */
-var ARS = require('../src/main/javascript/abstractresultset');
+var ARS = require('../src/abstractresultset');
 
 ARS.registerChannel('__isRS__', [Array.prototype, Object.prototype], function(val) {
     if (val instanceof Array || val instanceof Object) {

@@ -1,6 +1,6 @@
-var Core = require('./src/main/javascript/core');
+var Core = require('./src/core');
 
-Core.extend(Core, require('./src/main/javascript/iterator'));
+Core.extend(Core, require('./src/iterator'));
 
 Core.root[Core.__name] = Core;
 
