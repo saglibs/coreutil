@@ -15,15 +15,35 @@
     </properties>
 
     <build>
-        <sourceDirectory>src/main/javascript</sourceDirectory>
+        <sourceDirectory>src</sourceDirectory>
         <resources>
             <resource>
-                <directory>src/main/javascript</directory>
+                <directory>src</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <targetPath>/src</targetPath>
             </resource>
             <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
+                <directory>dist</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+                <targetPath>/dist</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>**/*.js</include>
+                </includes>
+                <excludes>
+                    <exclude>src/**/*.js</exclude>
+                    <exclude>test/**/*.js</exclude>
+                    <exclude>target/**/*.js</exclude>
+                    <exclude>dist/**/*.js</exclude>
+                    <exclude>node_modules/**/*.js</exclude>
+                </excludes>
             </resource>
         </resources>
         <plugins>
@@ -90,7 +110,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <descriptor>src/assembly/package.xml</descriptor>
+                    <descriptor>package.xml</descriptor>
                     <finalName>${project.build.finalName}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
