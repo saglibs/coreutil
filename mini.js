@@ -53,4 +53,12 @@ Mini.hiddenProperty = function(v) {
     };
 };
 
+//No <IE9 Compat
+Mini.keys = function() {
+    if (arguments[0]) {
+        return Object.keys(arguments[0]);
+    }
+    return Object.keys(this);
+};
+
 module.exports = Mini;

@@ -62,6 +62,14 @@ Mini.hiddenProperty = function(v) {
     };
 };
 
+//No <IE9 Compat
+Mini.keys = function() {
+    if (arguments[0]) {
+        return Object.keys(arguments[0]);
+    }
+    return Object.keys(this);
+};
+
 module.exports = Mini;
 },{}],3:[function(require,module,exports){
 var root = require('./_root');
@@ -5558,7 +5566,22 @@ C.__isRoot__ = true;
 
 C.__name = '$H';
 
-C.isArrayLike = require('lodash/isArrayLike');
+C.isArrayLike = function(value) {
+    if (value == null || value == undefined) {
+        return false;
+    }
+    var length = value["length"];
+    var toString = Object.prototype.toString.call(value);
+    if (toString == "[object Function]" || toString == "[object GeneratorFunction]") {
+        return false;
+    }
+    if (typeof length == "number") {
+        if (length > -1 && length < Number.MAX_VALUE && length % 1 === 0) {
+            return true;
+        }
+    }
+    return false;
+};
 
 /**
  * Check if a value can be parsed to an integer
@@ -5739,7 +5762,7 @@ C.language = C.isNodejs ? "" : (navigator.language || navigator['browserLanguage
 
 module.exports = C;
 
-},{"lodash/isArrayLike":25}],44:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /*
  * Custom Event Manipulation Module
  */
