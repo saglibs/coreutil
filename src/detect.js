@@ -25,6 +25,12 @@ C.isArrayLike = function(value) {
     return false;
 };
 
+C.isObject = function(value) {
+    var toString = Object.prototype.toString.call(value);
+    return !!(toString == "[object Function]" || toString == "[object GeneratorFunction]");
+
+};
+
 /**
  * Check if a value can be parsed to an integer
  *

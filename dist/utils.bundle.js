@@ -21829,6 +21829,12 @@ C.isArrayLike = function(value) {
     return false;
 };
 
+C.isObject = function(value) {
+    var toString = Object.prototype.toString.call(value);
+    return !!(toString == "[object Function]" || toString == "[object GeneratorFunction]");
+
+};
+
 /**
  * Check if a value can be parsed to an integer
  *
@@ -23593,7 +23599,7 @@ if (!Object.defineProperty || (0 < H.getIE() <= 8 && navigator.userAgent.indexOf
     addProperty = function(instance, k, descriptor) {
         instance[k] = descriptor.value;
 
-        if (isObject(descriptor[k])) {
+        if (H.isObject(descriptor[k])) {
             instance[k].ienumerable = !descriptor.enumerable;
         } else {
             if (!instance[k].ienumerables) {

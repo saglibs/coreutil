@@ -24,7 +24,7 @@ if (!Object.defineProperty || (0 < H.getIE() <= 8 && navigator.userAgent.indexOf
     addProperty = function(instance, k, descriptor) {
         instance[k] = descriptor.value;
 
-        if (isObject(descriptor[k])) {
+        if (H.isObject(descriptor[k])) {
             instance[k].ienumerable = !descriptor.enumerable;
         } else {
             if (!instance[k].ienumerables) {
